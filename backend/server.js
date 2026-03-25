@@ -5,6 +5,12 @@ dotenv.config({ path: "backend/config/config.env" });
 import app from "./app.js";
 import { connectMongoDatabase } from "./config/db.js";
 
+//Global error handler: handle uncaught exception errors
+process.on("uncaughtException", (err) => {
+  console.log("Uncaught Exception:", err.message);
+  process.exit(1);
+});
+
 const port = process.env.PORT || 3000;
 
 const startServer = async () => {
@@ -16,8 +22,14 @@ const startServer = async () => {
     });
   } catch (error) {
     console.log("Server start failed:", error.message);
-    process.exit(1);  //Exit if connection is failed
+    process.exit(1); //Exit if connection is failed
   }
 };
 
 startServer();
+
+// Global error handler: handle unhandled promise rejection
+process.on("unhandledRejection", (err) => {
+  console.log("Unhandled Rejection:", err.message);
+  process.exit(1);
+});
