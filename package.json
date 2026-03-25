@@ -1,0 +1,25 @@
+{
+  "name": "mern-e-commerce",
+  "version": "1.0.0",
+  "description": "This is an E-Commerce website.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon backend/server.js"
+  },
+  "keywords": [
+    "MongoDB",
+    "Express",
+    "React",
+    "Node"
+  ],
+  "author": "Devendra Singh Baghel",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "mongoose": "^9.3.1",
+    "nodemon": "^3.1.14"
+  }
+}
