@@ -1,6 +1,7 @@
 import { Product } from "../models/product.model.js";
 import HandleError from "../utils/handleError.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import ApiFeatures from "../utils/apiFeatures.js";
 
 //Create Products
 const createProducts = asyncHandler(async (req, res, next) => {
@@ -14,7 +15,8 @@ const createProducts = asyncHandler(async (req, res, next) => {
 
 //Get All Products
 const getAllProducts = asyncHandler(async (req, res, next) => {
-  const products = await Product.find();
+  const apiFeature = new ApiFeatures(Product.find(), req.query).search();
+  const products = await apiFeature.query;
   res.status(200).json({
     success: true,
     products,
