@@ -44,3 +44,6 @@ uploads/
 
 # Optional: config files with secrets
 config/config.env
+
+# Reference file
+FutureRef.md

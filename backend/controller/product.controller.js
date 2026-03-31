@@ -15,11 +15,44 @@ const createProducts = asyncHandler(async (req, res, next) => {
 
 //Get All Products
 const getAllProducts = asyncHandler(async (req, res, next) => {
-  const apiFeature = new ApiFeatures(Product.find(), req.query).search();
+  const resultsPerPage = Number(req.query.limit) || 10;
+
+  // Ensure current page is always >= 1
+  const page = Math.max(1, Number(req.query.page) || 1);
+
+  // Apply search and filter before pagination
+  const apiFeature = new ApiFeatures(Product.find(), req.query)
+    .search()
+    .filter();
+
+  // Clone the query BEFORE applying pagination
+  // This is important because we need total count of filtered results
+  // without pagination affecting it
+  const filteredQuery = apiFeature.query.clone();
+
+  const productCount = await filteredQuery.countDocuments();
+
+  const totalPages = Math.ceil(productCount / resultsPerPage);
+
+  // Handle case where requested page exceeds available pages
+  // Also check productCount > 0 to avoid unnecessary error when no data exists
+  if (page > totalPages && productCount > 0) {
+    throw new HandleError("This page doesn't exist", 404);
+  }
+
+  // Apply pagination AFTER counting documents
+  apiFeature.pagination(resultsPerPage);
+
+  // Execute final query (with search, filter, and pagination applied)
   const products = await apiFeature.query;
+
   res.status(200).json({
     success: true,
     products,
+    productCount,
+    resultsPerPage,
+    totalPages,
+    currentPage: page,
   });
 });
 
