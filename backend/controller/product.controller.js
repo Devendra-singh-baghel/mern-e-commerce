@@ -15,7 +15,7 @@ const createProducts = asyncHandler(async (req, res, next) => {
 
 //Get All Products
 const getAllProducts = asyncHandler(async (req, res, next) => {
-  const resultsPerPage = Number(req.query.limit) || 10;
+  const resultsPerPage = Math.max(1, Number(req.query.limit) || 10);
 
   // Ensure current page is always >= 1
   const page = Math.max(1, Number(req.query.page) || 1);
@@ -23,7 +23,8 @@ const getAllProducts = asyncHandler(async (req, res, next) => {
   // Apply search and filter before pagination
   const apiFeature = new ApiFeatures(Product.find(), req.query)
     .search()
-    .filter();
+    .filter()
+    .sort();
 
   // Clone the query BEFORE applying pagination
   // This is important because we need total count of filtered results

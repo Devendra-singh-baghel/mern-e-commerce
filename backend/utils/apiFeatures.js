@@ -35,7 +35,14 @@ class ApiFeatures {
     // Define fields that should be excluded from filtering
     // because they are used for other functionalities
     // like search and pagination
-    const removeFields = ["keyword", "page", "limit"];
+    const removeFields = [
+      "keyword",
+      "page",
+      "limit",
+      "sort",
+      "order",
+      "fields",
+    ];
 
     removeFields.forEach((key) => delete queryCopy[key]);
 
@@ -55,6 +62,23 @@ class ApiFeatures {
 
     // Apply pagination to query
     this.query = this.query.limit(resultPerPage).skip(skip);
+
+    return this;
+  }
+
+  sort() {
+    // Extract sort field and order from query params
+    const sortField = this.queryStr.sort;
+    const sortOrder = this.queryStr.order?.toLowerCase() === "desc" ? -1 : 1;
+
+    const allowedFields = ["price", "name", "createdAt", "ratings"];
+
+    if (sortField && allowedFields.includes(sortField)) {
+      //dynamic keys in objects using square brackets, enabling runtime-based object creation.
+      this.query = this.query.sort({ [sortField]: sortOrder });
+    } else {
+      this.query = this.query.sort({ createdAt: 1 });
+    }
 
     return this;
   }
