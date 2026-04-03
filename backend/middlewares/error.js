@@ -19,8 +19,8 @@ export default (err, req, res, next) => {
 
   // Handle MongoDB Duplicate Key Error
   if (err.code === 11000) {
-    message = `Duplicate field value entered`;
-    statusCode = 400;
+    message = `This ${Object.keys(err.keyValue)} already registered. Please Login to contiue.`;
+    statusCode = 409;
   }
 
   res.status(statusCode).json({

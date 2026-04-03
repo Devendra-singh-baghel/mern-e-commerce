@@ -57,16 +57,15 @@ const userSchema = new mongoose.Schema(
 
 // Password hashing middleware
 // Using function keyword because arrow functions don't have their own `this`
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
   // Only hash the password if it has been modified (or is new)
   // This prevents re-hashing the already hashed password when updating other fields
   if (!this.isModified("password")) {
-    return next();
+    return;
   }
 
   // Hash the password before saving to database
   this.password = await bcrypt.hash(this.password, 10);
-  next();
 });
 
 //Comparing original password and hashed password
@@ -79,6 +78,7 @@ userSchema.methods.getAccessToken = function () {
   return jwt.sign(
     {
       id: this._id,
+      email: this.email,
     },
     process.env.JWT_SECRET_KEY,
     {
