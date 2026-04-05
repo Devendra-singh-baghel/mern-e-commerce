@@ -4,8 +4,25 @@ import asyncHandler from "../utils/asyncHandler.js";
 import ApiFeatures from "../utils/apiFeatures.js";
 
 //Create Products
-const createProducts = asyncHandler(async (req, res, next) => {
-  const product = await Product.create(req.body);
+const createProduct = asyncHandler(async (req, res, next) => {
+  /*
+   * Prepare product data
+   * - Avoid mutating req.body directly
+   * - Attach user reference for ownership
+   */
+  const productData = {
+    ...req.body,
+    user: req.user.id,
+  };
+
+  /*
+   * Create product in database
+   */
+  const product = await Product.create(productData);
+
+  /*
+   * Send response with created product
+   */
   res.status(201).json({
     success: true,
     message: "Product Created Successfully.",
@@ -74,7 +91,7 @@ const getSingleProduct = asyncHandler(async (req, res, next) => {
 });
 
 //Update Products
-const updateProducts = asyncHandler(async (req, res, next) => {
+const updateProduct = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
 
   const product = await Product.findByIdAndUpdate(id, req.body, {
@@ -96,7 +113,7 @@ const updateProducts = asyncHandler(async (req, res, next) => {
 });
 
 //Delete Products
-const deleteProducts = asyncHandler(async (req, res, next) => {
+const deleteProduct = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
 
   const product = await Product.findByIdAndDelete(id);
@@ -112,9 +129,9 @@ const deleteProducts = asyncHandler(async (req, res, next) => {
   });
 });
 export {
-  createProducts,
+  createProduct,
   getAllProducts,
   getSingleProduct,
-  updateProducts,
-  deleteProducts,
+  updateProduct,
+  deleteProduct,
 };

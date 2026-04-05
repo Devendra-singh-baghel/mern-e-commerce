@@ -52,4 +52,33 @@ const verifyUserAuth = asyncHandler(async (req, res, next) => {
   next();
 });
 
-export { verifyUserAuth };
+const authorizeRoles = (...roles) => {
+  return (req, res, next) => {
+    /*
+     * Ensure user is authenticated
+     */
+    if (!req.user || !req.user.role) {
+      throw new HandleError("Unauthorized Access.", 401);
+    }
+
+    /*
+     * Normalize roles to avoid case-sensitivity issues
+     */
+    const allowedRoles = roles.map((role) => role.toLowerCase());
+    const userRole = req.user.role.toLowerCase();
+
+    /*
+     * Check if user has required role
+     */
+    if (!allowedRoles.includes(userRole)) {
+      throw new HandleError("Access denied: You don't have permissions.", 403);
+    }
+
+    /*
+     * User is authorized
+     */
+    next();
+  };
+};
+
+export { verifyUserAuth, authorizeRoles };
