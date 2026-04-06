@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 const userSchema = new mongoose.Schema(
   {
@@ -98,6 +99,39 @@ userSchema.methods.getRefreshToken = function () {
       expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
     },
   );
+};
+
+//Generate reset password token
+userSchema.methods.getResetPasswordToken = function () {
+  /*
+   * Step 1: Generate a random reset token
+   * - crypto.randomBytes creates a secure random buffer
+   * - Converted to hex string for easy sharing via URL/email
+   */
+  const resetToken = crypto.randomBytes(20).toString("hex");
+
+  /*
+   * Step 2: Hash the token before saving to database
+   * - Using SHA-256 hashing algorithm
+   * - We store the hashed token instead of the raw token for security
+   * - Even if the database is compromised, the original token cannot be used
+   */
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  /*
+   * Step 3: Set token expiration time
+   * - Token will expire after 15 minutes
+   * - Helps prevent misuse of old tokens
+   */
+  this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+
+  /*
+   * Step 4: Return the raw token
+   */
+  return resetToken;
 };
 
 export const User = mongoose.model("User", userSchema);

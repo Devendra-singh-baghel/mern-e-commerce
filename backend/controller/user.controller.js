@@ -2,6 +2,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import HandleError from "../utils/handleError.js";
 import tokenGenerator from "../utils/tokenGenerator.js";
+import { sendEmail } from "../utils/sendEmail.js";
 
 const registerUser = asyncHandler(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -165,4 +166,66 @@ const logoutUser = asyncHandler(async (req, res) => {
     });
 });
 
-export { registerUser, loginUser, logoutUser };
+//Reset password
+const forgotPassword = asyncHandler(async (req, res, next) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new HandleError("User doesn't exist.", 400);
+  }
+
+  let resetToken;
+  try {
+    //Generate reset token and save to DB
+    resetToken = user.getResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
+  } catch (error) {
+    throw new HandleError(
+      "Could not save reset token, please try again later",
+      500,
+    );
+  }
+
+  // Create reset URL (frontend route)
+  const resetPasswordURL = `${process.env.FRONTEND_URL}/password/forgot/${resetToken}`;
+
+  //Create email message
+  const message = `
+  You requested a password reset.
+
+  Please click the link below to reset your password:
+  ${resetPasswordURL}
+
+  This link will expire in 15 minutes.
+
+  If you did not request this, please ignore this email.
+  `;
+
+  try {
+    //Send email
+    await sendEmail({
+      email: user.email,
+      subject: "Password Reset Request.",
+      message,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: `Email is sent to ${user.email} successfully.`,
+    });
+  } catch (error) {
+    //Rollback token if email fails
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
+    throw new HandleError(
+      "Email couldn't be sent, please try again later",
+      500,
+    );
+  }
+});
+
+export { registerUser, loginUser, logoutUser, forgotPassword };
