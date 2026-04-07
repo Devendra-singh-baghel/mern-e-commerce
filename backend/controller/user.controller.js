@@ -404,6 +404,43 @@ const updatePassword = asyncHandler(async (req, res, next) => {
     });
 });
 
+//Update user profile
+const updateUserProfile = asyncHandler(async (req, res, next) => {
+  //Step 1: Extract fields from request body
+  const { name, email } = req.body;
+
+  /*
+   * Step 2: Prepare update object (only provided fields)
+   * - Prevent overwriting with undefined values
+   */
+  const updateData = {};
+
+  if (name) updateData.name = name;
+  if (email) updateData.email = email.toLowerCase();
+
+  //Step 3: Ensure at least one field is provided
+  if (Object.keys(updateData).length === 0) {
+    throw new HandleError("Please provide at least one field", 400);
+  }
+
+  //Step 4: Update user in database
+  const user = await User.findByIdAndUpdate(req.user.id, updateData, {
+    returnDocument: "after",
+    runValidators: true,
+  }).select("-password -refreshToken");
+
+  //Step 5: Handle user not found
+  if (!user) {
+    throw new HandleError("User not found", 404);
+  }
+
+  //Step 6: Send response
+  res.status(200).json({
+    success: true,
+    message: "Profile updated successfully.",
+    user,
+  });
+});
 export {
   registerUser,
   loginUser,
@@ -412,4 +449,5 @@ export {
   resetPassword,
   getUserDetails,
   updatePassword,
+  updateUserProfile,
 };
