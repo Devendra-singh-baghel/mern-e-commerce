@@ -3,6 +3,7 @@ import { User } from "../models/user.model.js";
 import HandleError from "../utils/handleError.js";
 import tokenGenerator from "../utils/tokenGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
+import crypto from "crypto";
 
 const registerUser = asyncHandler(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -166,7 +167,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     });
 });
 
-//Reset password
+//Forgot password
 const forgotPassword = asyncHandler(async (req, res, next) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
@@ -188,7 +189,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   }
 
   // Create reset URL (frontend route)
-  const resetPasswordURL = `${process.env.FRONTEND_URL}/password/forgot/${resetToken}`;
+  const resetPasswordURL = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
 
   //Create email message
   const message = `
@@ -228,4 +229,91 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { registerUser, loginUser, logoutUser, forgotPassword };
+//Reset password
+const resetPassword = asyncHandler(async (req, res, next) => {
+  /*
+   * Step 1: Hash the token from URL
+   * - Raw token comes from req.params.token
+   * - We hash it to match with stored hashed token in DB
+   */
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+
+  //Step 2: Find user with valid token and non-expired token
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  //Step 3: If token is invalid or expired
+  if (!user) {
+    throw new HandleError(
+      "Reset password token is invalid or has expired",
+      400,
+    );
+  }
+
+  //Step 4: Validate new password
+  const { password, confirmPassword } = req.body;
+
+  if (!password || !confirmPassword) {
+    throw new HandleError("Please provide password and confirm password", 400);
+  }
+
+  if (password !== confirmPassword) {
+    throw new HandleError("Passwords do not match", 400);
+  }
+
+  if (password.length < 8) {
+    throw new HandleError("Password must be at least 8 characters long", 400);
+  }
+
+  /*
+   * Step 5: Update password
+   * - Will be hashed automatically via pre-save middleware
+   */
+  user.password = password;
+
+  //Step 6: Clear reset token fields
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+
+  //Step 7: Invalidate old refresh token (important for security)
+  user.refreshToken = undefined;
+
+  //Step 8: Save updated user
+  await user.save();
+
+  //Step 9: Generate new access & refresh tokens (same as login)
+  const { accessToken, refreshToken } = await tokenGenerator(user._id);
+
+  // Step 10: Get clean user (without password & refreshToken)
+  const updatedUser = await User.findById(user._id).select(
+    "-password -refreshToken",
+  );
+
+  // Step 11: Cookie options (same as login)
+  const options = {
+    expires: new Date(
+      Date.now() + process.env.COOKIE_EXPIRY * 24 * 60 * 60 * 1000,
+    ),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+  };
+
+  //Step 12: Send response with cookies (auto login after reset)
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json({
+      success: true,
+      message: "Password reset successful",
+      user: updatedUser,
+    });
+});
+
+export { registerUser, loginUser, logoutUser, forgotPassword, resetPassword };

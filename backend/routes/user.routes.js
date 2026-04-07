@@ -4,6 +4,7 @@ import {
   logoutUser,
   registerUser,
   forgotPassword,
+  resetPassword,
 } from "../controller/user.controller.js";
 import { verifyUserAuth } from "../middlewares/userAuth.js";
 
@@ -13,5 +14,6 @@ router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
 router.route("/logout").post(verifyUserAuth, logoutUser);
 router.route("/password/forgot").post(forgotPassword);
+router.route("/password/reset/:token").post(resetPassword);
 
 export default router;
