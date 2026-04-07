@@ -316,4 +316,100 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     });
 });
 
-export { registerUser, loginUser, logoutUser, forgotPassword, resetPassword };
+//Get user details
+const getUserDetails = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+//Update password
+const updatePassword = asyncHandler(async (req, res, next) => {
+  //Step 1: Extract input fields
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+
+  //Step 2: Get user with password - Required to verify old password
+  const user = await User.findById(req.user.id).select("+password");
+
+  if (!user) {
+    throw new HandleError("User not found", 404);
+  }
+
+  //Step 3: Validate input fields
+  if (!oldPassword || !newPassword || !confirmPassword) {
+    throw new HandleError("All fields are required.", 400);
+  }
+
+  //Step 4: Verify old password
+  const isPasswordValid = await user.verifyPassword(oldPassword);
+
+  if (!isPasswordValid) {
+    throw new HandleError("Old password is incorrect", 400);
+  }
+
+  //Step 5: Validate new password
+  if (newPassword.length < 8) {
+    throw new HandleError("Password must be at least 8 characters long", 400);
+  }
+
+  if (newPassword !== confirmPassword) {
+    throw new HandleError("Passwords do not match", 400);
+  }
+
+  if (oldPassword === newPassword) {
+    throw new HandleError(
+      "New password must be different from old password",
+      400,
+    );
+  }
+
+  //Step 6: Update password - Will be hashed via pre-save middleware
+  user.password = newPassword;
+
+  //Step 7: Invalidate old refresh token
+  user.refreshToken = undefined;
+
+  //Step 8: Save user
+  await user.save();
+
+  //Step 9: Generate new tokens
+  const { accessToken, refreshToken } = await tokenGenerator(user._id);
+
+  //Step 10: Get clean user data
+  const updatedUser = await User.findById(user._id).select(
+    "-password -refreshToken",
+  );
+
+  //Step 11: Cookie options
+  const options = {
+    expires: new Date(
+      Date.now() + process.env.COOKIE_EXPIRY * 24 * 60 * 60 * 1000,
+    ),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+  };
+
+  //Step 12: Send response
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json({
+      success: true,
+      message: "Password updated successfully",
+      user: updatedUser,
+    });
+});
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  forgotPassword,
+  resetPassword,
+  getUserDetails,
+  updatePassword,
+};
