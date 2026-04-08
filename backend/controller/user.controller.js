@@ -5,6 +5,7 @@ import tokenGenerator from "../utils/tokenGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
 
+//Register user
 const registerUser = asyncHandler(async (req, res, next) => {
   const { name, email, password } = req.body;
 
@@ -441,6 +442,99 @@ const updateUserProfile = asyncHandler(async (req, res, next) => {
     user,
   });
 });
+
+//Admin - getting all user information
+const getAllUsers = asyncHandler(async (req, res, next) => {
+  const users = await User.find().select(
+    "-password -refreshToken -resetPasswordToken -resetPasswordExpire",
+  );
+
+  const totalUsers = users.length;
+
+  res.status(200).json({
+    success: true,
+    totalUsers,
+    users,
+  });
+});
+
+//Admin - getting single user information
+const getSingleUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id).select(
+    "-password -refreshToken -resetPasswordToken -resetPasswordExpire",
+  );
+
+  if (!user) {
+    throw new HandleError("User not found", 404);
+  }
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+//Admin - changing user role
+const updateUserRole = asyncHandler(async (req, res, next) => {
+  //Step 1: Extract role from request body
+  const { role } = req.body;
+
+  if (!role) {
+    throw new HandleError("Role is required", 400);
+  }
+
+  //Step 2: Validate allowed roles
+  const allowedRoles = ["user", "admin"];
+
+  if (!allowedRoles.includes(role)) {
+    throw new HandleError("Invalid role provided", 400);
+  }
+
+  //Step 3: Update role of target user
+  const user = await User.findByIdAndUpdate(
+    req.params.id,
+    { role },
+    {
+      returnDocument: "after",
+      runValidators: true,
+    },
+  ).select("-password -refreshToken -resetPasswordToken -resetPasswordExpire");
+
+  //Step 4: Handle user not found
+  if (!user) {
+    throw new HandleError("User does not exist", 404);
+  }
+
+  //Step 5: Send response
+  res.status(200).json({
+    success: true,
+    message: "User role updated successfully",
+    user,
+  });
+});
+
+//Admin - deleting user account
+const deleteUser = asyncHandler(async (req, res, next) => {
+  //Ensures that an admin cannot delete their own account.
+  if (req.user.id === req.params.id) {
+    throw new HandleError("You cannot delete your own account", 400);
+  }
+
+  const user = await User.findByIdAndDelete(req.params.id).select(
+    "-password -refreshToken -resetPasswordToken -resetPasswordExpire",
+  );
+
+  if (!user) {
+    throw new HandleError("User not found", 404);
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "User deleted successfully",
+    user,
+  });
+});
+
 export {
   registerUser,
   loginUser,
@@ -450,4 +544,8 @@ export {
   getUserDetails,
   updatePassword,
   updateUserProfile,
+  getAllUsers,
+  getSingleUser,
+  updateUserRole,
+  deleteUser,
 };

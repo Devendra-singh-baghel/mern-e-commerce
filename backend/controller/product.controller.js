@@ -128,10 +128,25 @@ const deleteProduct = asyncHandler(async (req, res, next) => {
     product,
   });
 });
+
+//
+const getAdminProducts = asyncHandler(async (req, res, next) => {
+  const products = await Product.find();
+
+  const totalProducts = products.length;
+
+  res.status(200).json({
+    success: true,
+    totalProducts,
+    products,
+  });
+});
+
 export {
   createProduct,
   getAllProducts,
   getSingleProduct,
   updateProduct,
   deleteProduct,
+  getAdminProducts,
 };
