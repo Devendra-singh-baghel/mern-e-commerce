@@ -20,11 +20,6 @@ const productSchema = new mongoose.Schema(
       maxLength: [7, "Price Cannot Execeed 7 Digits."],
     },
 
-    ratings: {
-      type: Number,
-      default: 0,
-    },
-
     image: [
       {
         public_id: {
@@ -57,8 +52,19 @@ const productSchema = new mongoose.Schema(
       default: 0,
     },
 
+    avgRatings: {
+      type: Number,
+      default: 0,
+    },
+
     reviews: [
       {
+        user: {
+          type: mongoose.Schema.ObjectId,
+          ref: "User",
+          required: true,
+        },
+
         name: {
           type: String,
           required: true,
@@ -68,6 +74,8 @@ const productSchema = new mongoose.Schema(
         rating: {
           type: Number,
           required: true,
+          min: 1,
+          max: 5,
         },
 
         comment: {
@@ -77,7 +85,8 @@ const productSchema = new mongoose.Schema(
         },
       },
     ],
-    user: {
+
+    createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
       required: true,

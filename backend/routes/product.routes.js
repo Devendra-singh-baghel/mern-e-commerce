@@ -1,9 +1,12 @@
 import express from "express";
 import {
   createProduct,
+  createReviewForProduct,
   deleteProduct,
+  deleteReview,
   getAdminProducts,
   getAllProducts,
+  getProductReviews,
   getSingleProduct,
   updateProduct,
 } from "../controller/product.controller.js";
@@ -18,6 +21,17 @@ router.route("/products").get(getAllProducts);
 
 //Get Single Product
 router.route("/product/:id").get(getSingleProduct);
+
+//Creating Review
+router.route("/product/review").post(verifyUserAuth, createReviewForProduct);
+
+//Get Product Reviews
+router.route("/product/reviews/:id").get(verifyUserAuth, getProductReviews);
+
+//Delete Product Reviews
+router
+  .route("/product/review/:productId/:reviewId")
+  .delete(verifyUserAuth, deleteReview);
 
 /************************************ X ********************************/
 //Admin Routes
