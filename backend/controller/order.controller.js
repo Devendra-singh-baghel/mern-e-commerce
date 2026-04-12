@@ -77,8 +77,120 @@ const createNewOrder = asyncHandler(async (req, res, next) => {
   // 7. Response
   res.status(201).json({
     success: true,
+    message: "Order Created Successfully.",
     order,
   });
 });
 
-export { createNewOrder };
+//Getting Single Order
+const getSingleOrder = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.id).populate(
+    "user",
+    "name email",
+  );
+
+  if (!order) {
+    throw new HandleError("Order not found", 404);
+  }
+
+  /*
+   * Authorization Check
+   * - User can access only their own order
+   * - Admin can access any order
+   */
+  if (
+    order.user._id.toString() !== req.user._id.toString() &&
+    req.user.role !== "admin"
+  ) {
+    throw new HandleError("You are not authorized to view this order", 403);
+  }
+
+  res.status(200).json({
+    success: true,
+    order,
+  });
+});
+
+//Geeting All My Orders
+const getAllMyOrders = asyncHandler(async (req, res, next) => {
+  const orders = await Order.find({ user: req.user._id });
+
+  res.status(200).json({
+    success: true,
+    message:
+      orders.length === 0 ? "No orders found" : "Orders fetched successfully",
+    orders,
+  });
+});
+
+//Admin - Getting All Orders
+const getAllOrders = asyncHandler(async (req, res, next) => {
+  const orders = await Order.find();
+
+  // Calculate total revenue
+  const totalAmount = orders.reduce(
+    (acc, order) => acc + (order.totalPrice || 0),
+    0,
+  );
+
+  res.status(200).json({
+    success: true,
+    totalAmount,
+    orders,
+  });
+});
+
+//Update Order Status
+const updateOrderStatus = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+
+  if (!order) {
+    throw new HandleError("No order found", 404);
+  }
+
+  // Prevent updating already delivered order
+  if (order.orderStatus === "Delivered") {
+    throw new HandleError("Order already delivered", 400);
+  }
+
+  const status = req.body.status.toLowerCase();
+
+  // Validate input
+  if (!req.body.status) {
+    throw new HandleError("Order status is required", 400);
+  }
+
+  // Update Status and Set shippedAt
+  if (status === "shipped") {
+    order.orderStatus = "Shipped";
+    order.shippedAt = Date.now();
+  }
+
+  // Update Status and Set deliveredAt + paidAt (for COD)
+  if (status === "delivered") {
+    order.orderStatus = "Delivered";
+    order.deliveredAt = Date.now();
+
+    // If COD, payment happens at delivery
+    if (order.paymentMethod === "COD") {
+      // Update payment status
+      order.paymentInfo.status = "completed";
+      order.paidAt = Date.now();
+    }
+  }
+
+  await order.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    success: true,
+    order,
+  });
+});
+
+export {
+  createNewOrder,
+  getSingleOrder,
+  getAllMyOrders,
+  getAllOrders,
+  updateOrderStatus,
+};

@@ -82,7 +82,7 @@ const orderSchema = mongoose.Schema(
 
     paidAt: {
       type: Date,
-      required: true,
+      // required: true,
     },
 
     itemsPrice: {
@@ -115,6 +115,7 @@ const orderSchema = mongoose.Schema(
 
     orderStatus: {
       type: String,
+      required: true,
       enum: ["Processing", "Shipped", "Delivered", "Cancelled"],
       default: "Processing",
     },
