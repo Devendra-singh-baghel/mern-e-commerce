@@ -1,7 +1,9 @@
 import express from "express";
 import { authorizeRoles, verifyUserAuth } from "../middlewares/userAuth.js";
 import {
+  cancelOrder,
   createNewOrder,
+  deleteOrder,
   getAllMyOrders,
   getAllOrders,
   getSingleOrder,
@@ -28,5 +30,13 @@ router
 router
   .route("/admin/order/:id")
   .patch(verifyUserAuth, authorizeRoles("admin"), updateOrderStatus);
+
+//Admin - Delete Order
+router
+  .route("/admin/order/:id")
+  .delete(verifyUserAuth, authorizeRoles("admin"), deleteOrder);
+
+//Cancel Order
+router.route("/order/:id").patch(verifyUserAuth, cancelOrder);
 
 export default router;

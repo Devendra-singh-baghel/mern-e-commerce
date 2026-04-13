@@ -187,10 +187,74 @@ const updateOrderStatus = asyncHandler(async (req, res, next) => {
   });
 });
 
+//Admin - Delete Order
+const deleteOrder = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+
+  if (!order) {
+    throw new HandleError("No order found", 404);
+  }
+
+  // Prevent deleting Un delivered orders
+  if (order.orderStatus !== "Delivered") {
+    throw new HandleError(
+      "This order is under processing and cannot be deleted",
+      400,
+    );
+  }
+
+  // Delete order
+  await Order.deleteOne({ _id: order._id });
+
+  res.status(200).json({
+    success: true,
+    message: "Order deleted successfully.",
+  });
+});
+
+//Cancel order
+const cancelOrder = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+
+  if (!order) {
+    throw new HandleError("No order found", 404);
+  }
+
+  if (order.orderStatus === "Delivered") {
+    throw new HandleError("Delivered order cannot be cancelled", 400);
+  }
+
+  // Restore stock
+  for (const item of order.orderItems) {
+    const product = await Product.findById(item.product);
+
+    if (product) {
+      product.stock += item.quantity;
+      await product.save({ validateBeforeSave: false });
+    }
+  }
+
+  // Update status
+  order.orderStatus = "Cancelled";
+
+  // Update payment status
+  order.paymentInfo.status = "failed";
+
+  await order.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Order cancelled successfully",
+    order,
+  });
+});
+
 export {
   createNewOrder,
   getSingleOrder,
   getAllMyOrders,
   getAllOrders,
   updateOrderStatus,
+  deleteOrder,
+  cancelOrder,
 };
