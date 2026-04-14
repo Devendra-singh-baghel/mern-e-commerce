@@ -1,12 +1,26 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
-@import "tailwindcss";
+:root {
+  --primary-main: #6c5b7b;
+  --primary-dark: #4e4a59;
+  --primary-light: #f8b5b1;
 
-/* This is a temporary background color, just to avoid a white screen. */
+  --bg-primary: #2e2e3c;
+  --bg-secondary: #3b3b4f;
+
+  --text-primary: #eae7e0;
+  --text-secondary: #b9a7a0;
+  --text-light: #ffffff;
+
+  --border-color: #5c4a6f;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
+}
+
 * {
   margin: 0;
   padding: 0;
-  background: #16171d;
-  color: whitesmoke;
+  box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }

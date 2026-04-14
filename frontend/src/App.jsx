@@ -1,10 +1,14 @@
 import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from "react-router"
+import Home from './pages/home/Home'
 
 function App() {
   return (
-    <div>
-      <h1 className='text-amber-300'>Ecommerce Website</h1>
-    </div>
+    <Router>
+      <Routes>
+        <Route path='/' element={<Home />} />
+      </Routes>
+    </Router>
   )
 }
 
