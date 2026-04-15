@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config({ path: "backend/config/config.env" });
+dotenv.config({ path: "config/config.env" });
 //Environment variables should always be imported at the top, because if `process.env` is used in `app.js` or `db.js`, it could be undefined.
 
 import app from "./app.js";

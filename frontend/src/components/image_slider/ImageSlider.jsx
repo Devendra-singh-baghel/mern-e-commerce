@@ -35,6 +35,7 @@ function ImageSlider() {
             <div className="slider-dots">
                 {images.map((_, index) => (
                     <span
+                        key={index}
                         className={`dot ${index === currentIndex ? "active" : ""}`}
                         onClick={() => setCurrentIndex(index)}
                     />
