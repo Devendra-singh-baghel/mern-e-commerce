@@ -5,8 +5,10 @@ import Navbar from '../../components/navbar/Navbar'
 import ImageSlider from '../../components/image_slider/ImageSlider'
 import Product from '../../components/product/Product'
 import PageTitle from '../../components/page_title/PageTitle'
+import Loader from '../../components/loader/Loader'
 import { useDispatch, useSelector } from 'react-redux'
-import { getProduct } from "../../features/products/productSlice"
+import { getProduct, removeErrors } from "../../features/products/productSlice"
+import { toast } from 'react-toastify'
 
 
 
@@ -18,6 +20,20 @@ function Home() {
     useEffect(() => {
         dispatch(getProduct());
     }, [dispatch])
+
+    useEffect(() => {
+        if (error) {
+            toast.error(error.message, {
+                position: "top-center",
+                autoClose: 3000
+            });
+            dispatch(removeErrors());
+        }
+    }, [dispatch, error]);
+
+    if (loading) return <Loader />;
+
+    if (!products) return null;
 
     return (
         <>
