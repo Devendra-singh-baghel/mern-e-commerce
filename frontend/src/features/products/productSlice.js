@@ -4,9 +4,11 @@ import axios from "axios";
 //Get all products (thunk)
 export const getProduct = createAsyncThunk(
   "product/getProduct",
-  async (_, { rejectWithValue }) => {
+  async ({ keyword }, { rejectWithValue }) => {
     try {
-      const url = "/api/v1/products";
+      const url = keyword
+        ? `/api/v1/products?keyword=${encodeURIComponent(keyword)}`
+        : `/api/v1/products`;
       const { data } = await axios.get(url);
       return data;
     } catch (error) {
@@ -61,6 +63,7 @@ const productSlice = createSlice({
       .addCase(getProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Something went wrong";
+        state.products = [];
       });
 
     //Get product details (lifecycle)

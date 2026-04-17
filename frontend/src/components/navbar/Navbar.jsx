@@ -1,13 +1,30 @@
 import React, { useState } from "react";
 import "./Navbar.css";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Search, ShoppingCart, PersonAdd, Close, Menu } from "@mui/icons-material"
 
 function Navbar() {
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
     const isAuthenticated = false;
+    const navigate = useNavigate();
+
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            navigate(`/products?keyword=${encodeURIComponent(searchQuery.trim())}`)
+        } else {
+            navigate(`/products`)
+        }
+
+        setSearchQuery("");
+    }
 
     return (
         <nav className="navbar">
@@ -34,19 +51,28 @@ function Navbar() {
                 </div>
 
                 <div className="navbar-icons">
-                    {/* <div className="search-container">
-                        <form className="search-form">
+                    <div className="search-container">
+                        <form
+                            className={`search-form ${isSearchOpen ? "active" : ""}`}
+                            onSubmit={handleSearchSubmit}
+                        >
                             <input
                                 type="text"
                                 className="search-input"
                                 placeholder="Search products..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                             />
 
-                            <button className="search-icons">
+                            <button
+                                type="button"
+                                className="search-icon"
+                                onClick={toggleSearch}
+                            >
                                 <Search focusable="false" />
                             </button>
                         </form>
-                    </div> */}
+                    </div>
 
                     <div className="cart-container">
                         <Link to="/cart">

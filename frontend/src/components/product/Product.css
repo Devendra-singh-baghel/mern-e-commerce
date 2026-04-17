@@ -83,8 +83,7 @@
   margin-bottom: 0.5rem;
 }
 
-.home-price,
-.product-price,
+.product_price,
 .product-card-span {
   font-size: 1rem;
   font-weight: bold;

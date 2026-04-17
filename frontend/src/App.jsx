@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router"
 import Home from './pages/home/Home'
 import ProductDetails from './pages/product_details/ProductDetails'
+import Products from './pages/products/Products'
 
 function App() {
   return (
@@ -9,6 +10,8 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/product/:id' element={<ProductDetails />} />
+        <Route path='/products' element={<Products />} />
+        <Route path='/products/:keyword' element={<Products />} />
       </Routes>
     </Router>
   )

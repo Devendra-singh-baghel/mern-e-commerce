@@ -16,7 +16,7 @@ function Product({ product }) {
                 <img src={product.image[0].url} alt={product.name} className="product-image-cart" />
                 <div className="product-details">
                     <h3 className="product-title">{product.name}</h3>
-                    <p className="product-price"><strong>Price: </strong>{product.price}/-</p>
+                    <p className="product_price"><strong>Price: </strong>{product.price}/-</p>
                     <div className="rating-container">
                         <Rating
                             value={product.avgRatings}

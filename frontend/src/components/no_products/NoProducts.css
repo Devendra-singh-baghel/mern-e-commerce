@@ -1,0 +1,27 @@
+.no_products_content {
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.no_products_icon {
+  font-size: 3rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.no_products_title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.no_products_message {
+  color: #666;
+  max-width: 400px;
+}
