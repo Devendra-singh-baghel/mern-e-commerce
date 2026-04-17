@@ -34,7 +34,7 @@ function Pagination({
     const { totalPages, products } = useSelector((state) => state.product);
 
     //If there are no products or totalPages is invalid, do not render pagination UI.
-    if (!products || products.length === 0 || totalPages < 1) {
+    if (!products || products.length === 0 || totalPages <= 1) {
         return null;
     }
 
