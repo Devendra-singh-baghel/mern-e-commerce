@@ -4,11 +4,20 @@ import axios from "axios";
 //Get all products (thunk)
 export const getProduct = createAsyncThunk(
   "product/getProduct",
-  async ({ keyword, page = 1 }, { rejectWithValue }) => {
+  async ({ keyword, page = 1, category }, { rejectWithValue }) => {
     try {
-      const url = keyword
-        ? `/api/v1/products?keyword=${encodeURIComponent(keyword)}&page=${page}`
-        : `/api/v1/products?page=${page}`;
+      let url = "/api/v1/products?page=" + page;
+
+      if (category) {
+        url += `&category=${category}`;
+      }
+
+      if (keyword) {
+        url += `&keyword=${keyword}`;
+      }
+      // const url = keyword
+      //   ? `/api/v1/products?keyword=${encodeURIComponent(keyword)}&page=${page}`
+      //   : `/api/v1/products?page=${page}`;
       const { data } = await axios.get(url);
       return data;
     } catch (error) {
