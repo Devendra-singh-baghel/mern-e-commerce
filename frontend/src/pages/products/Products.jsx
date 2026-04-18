@@ -40,8 +40,9 @@ function Products() {
     // URLSearchParams is a browser API that extract query parameters from URL
     const searchParams = new URLSearchParams(location.search);
 
-    // Search keyword (used for filtering products)
+    // Search keyword and category (used for filtering products)
     const keyword = searchParams.get("keyword");
+    const category = searchParams.get("category");
 
     //Extract page number from URL
     const pageFromURL = parseInt(searchParams.get("page"), 10) || 1;
@@ -49,6 +50,7 @@ function Products() {
     //Local state to control current page
     const [currentPage, setCurrentPage] = useState(pageFromURL);
 
+    const categories = ["Electronic", "Furniture", "Stationery", "Fruits", "Home"]
     /*
        Sync state with URL
        --------------------
@@ -68,8 +70,8 @@ function Products() {
        - location.search changes (future filters support)
      */
     useEffect(() => {
-        dispatch(getProduct({ keyword, page: currentPage }));
-    }, [dispatch, keyword, currentPage, location.search]);
+        dispatch(getProduct({ keyword, page: currentPage, category }));
+    }, [dispatch, keyword, currentPage, category, location.search]);
 
     /*
        Error Handling
@@ -121,6 +123,14 @@ function Products() {
         }
     }
 
+    const handleCategoryClick = (category) => {
+        // Clone existing query params to preserve other filters
+        const newSearchParams = new URLSearchParams(location.search);
+        newSearchParams.set("category", category);
+        newSearchParams.delete("page");
+        navigate(`?${newSearchParams.toString()}`);
+    }
+
     // Show loader while fetching data
     if (loading) return <Loader />;
 
@@ -140,6 +150,17 @@ function Products() {
                 <div className="filter-section">
                     <h3 className="filter-heading">CATEGORIES</h3>
                     {/* Future: Add category filters here */}
+                    <ul>
+                        {categories.map((category) => {
+                            return (
+                                <li
+                                    key={category}
+                                    onClick={() => handleCategoryClick(category)}
+                                >{category}
+                                </li>
+                            )
+                        })}
+                    </ul>
                 </div>
 
                 {/* Main Products Section */}
