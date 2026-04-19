@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import "./Register.css"
+import "./Form.css"
 import { Link, useNavigate } from 'react-router'
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeErrors, removeSuccess } from '../features/user/userSlice';
+import { register, removeErrors, removeSuccess } from '../features/user/userSlice';
+import Loader from '../components/loader/Loader';
 
 function Register() {
 
@@ -75,6 +76,9 @@ function Register() {
             navigate("/login"); //in future i will be change it
         }
     }, [dispatch, success]);
+
+    // Show loader while fetching data
+    if (loading) return <Loader />;
 
     return (
         <div className="form_container container">
