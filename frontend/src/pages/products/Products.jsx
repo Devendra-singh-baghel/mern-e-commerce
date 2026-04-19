@@ -123,6 +123,12 @@ function Products() {
         }
     }
 
+    /*
+       Handle Category Click
+       -------------------
+       - Updates URL query params
+       - Triggers new API call via useEffect
+     */
     const handleCategoryClick = (category) => {
         // Clone existing query params to preserve other filters
         const newSearchParams = new URLSearchParams(location.search);
@@ -149,7 +155,6 @@ function Products() {
                 {/* Sidebar Filter Section */}
                 <div className="filter-section">
                     <h3 className="filter-heading">CATEGORIES</h3>
-                    {/* Future: Add category filters here */}
                     <ul>
                         {categories.map((category) => {
                             return (
