@@ -47,6 +47,21 @@ export const login = createAsyncThunk(
   },
 );
 
+//load user API
+export const loadUser = createAsyncThunk(
+  "user/loadUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get("/api/v1/profile");
+      return data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || "Something went wrong while loading user.",
+      );
+    }
+  },
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -106,6 +121,26 @@ const userSlice = createSlice({
         state.loading = false;
         state.error =
           action.payload?.message || "Login failed. Please try again later.";
+        state.user = null;
+        state.isAuthenticated = false;
+      });
+
+    //Load user (lifecycle)
+    builder
+      .addCase(loadUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loadUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.user = action.payload?.user || null;
+        state.isAuthenticated = Boolean(action.payload?.user);
+      })
+      .addCase(loadUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.payload?.message || "Something went wrong while loading user.";
         state.user = null;
         state.isAuthenticated = false;
       });
