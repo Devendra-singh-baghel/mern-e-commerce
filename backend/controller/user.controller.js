@@ -4,14 +4,20 @@ import HandleError from "../utils/handleError.js";
 import tokenGenerator from "../utils/tokenGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
+import uploadOnCloudinary from "../utils/cloudinary.js";
 
 //Register user
 const registerUser = asyncHandler(async (req, res, next) => {
   const { name, email, password } = req.body;
+  const avatar = req.files?.avatar;
 
   // Validate input
   if (!name || !email || !password) {
     throw new HandleError("All fields are required.", 400);
+  }
+
+  if (!avatar) {
+    throw new HandleError("Avatar is required", 400);
   }
 
   // Check existing user
@@ -20,14 +26,25 @@ const registerUser = asyncHandler(async (req, res, next) => {
     throw new HandleError("User with this email already exists", 409);
   }
 
+  // Cloudinary mein temp path se upload karo
+  const myCloud = await uploadOnCloudinary(avatar.tempFilePath, {
+    folder: "avatars",
+    width: 150,
+    crop: "scale",
+  });
+
+  if (!myCloud) {
+    throw new HandleError("Avatar upload failed", 500);
+  }
+
   // Create user
   const user = await User.create({
     name,
     email,
     password,
     avatar: {
-      public_id: "This is temp id",
-      url: "This is temp url",
+      public_id: myCloud.public_id,
+      url: myCloud.secure_url,
     },
   });
 
