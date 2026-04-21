@@ -1,15 +1,19 @@
 import React from 'react'
 import "./UserDashboard.css"
 import { useNavigate } from 'react-router'
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import { logout, removeSuccess } from '../features/user/userSlice';
 
 function UserDashboard({ user }) {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const options = [
         { name: "Orders", funcName: orders },
         { name: "Account", funcName: profile },
-        { name: "Logout", funcName: logout },
+        { name: "Logout", funcName: logoutUser },
     ]
 
     if (user.role === "admin") {
@@ -26,8 +30,17 @@ function UserDashboard({ user }) {
         navigate("/profile");
     };
 
-    function logout() {
-        console.log(logout);
+    function logoutUser() {
+        dispatch(logout())
+            .unwrap()
+            .then(() => {
+                toast.success("Logout Successful", { position: "top-center", autoClose: 3000 });
+                dispatch(removeSuccess());
+                navigate("/login");
+            })
+            .catch((error) => {
+                toast.success(error.message || "Logout Failed", { position: "top-center", autoClose: 3000 });
+            })
     }
 
     function dashboard() {
