@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import "./UserDashboard.css"
 import { useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux';
@@ -9,6 +9,11 @@ function UserDashboard({ user }) {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [menuVisible, setMenuVisible] = useState(false);
+
+    const toggleMenu = () => {
+        setMenuVisible(!menuVisible);
+    }
 
     const options = [
         { name: "Orders", funcName: orders },
@@ -48,28 +53,39 @@ function UserDashboard({ user }) {
     }
 
     return (
-        <div className="dashboard_container">
-            <div className="profile_header">
-                <img
-                    src={user.avatar.url ? user.avatar.url : "./images/profile.png"}
-                    alt="Profile Picture"
-                    className="profile_avatar"
-                />
+        <>
+            <div
+                className={`overlay ${menuVisible ? "show" : ""}`}
+                onClick={toggleMenu}
+            ></div >
+            <div className="dashboard_container">
+                <div
+                    className="profile_header"
+                    onClick={toggleMenu}
+                >
+                    <img
+                        src={user.avatar.url ? user.avatar.url : "./images/profile.png"}
+                        alt="Profile Picture"
+                        className="profile_avatar"
+                    />
 
-                <span className="profile_name">{user.name || "User"}</span>
-            </div>
+                    <span className="profile_name">{user.name || "User"}</span>
+                </div>
 
-            <div className="menu_options">
-                {options.map((item) => (
-                    <button
-                        className="menu_option_btn"
-                        key={item.name}
-                        onClick={item.funcName}
-                    >{item.name}
-                    </button>
-                ))}
+                {menuVisible && (
+                    <div className="menu_options">
+                        {options.map((item) => (
+                            <button
+                                className="menu_option_btn"
+                                key={item.name}
+                                onClick={item.funcName}
+                            >{item.name}
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
-        </div>
+        </>
     )
 }
 
