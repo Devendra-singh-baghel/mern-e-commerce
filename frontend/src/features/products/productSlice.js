@@ -15,9 +15,7 @@ export const getProduct = createAsyncThunk(
       if (keyword) {
         url += `&keyword=${keyword}`;
       }
-      // const url = keyword
-      //   ? `/api/v1/products?keyword=${encodeURIComponent(keyword)}&page=${page}`
-      //   : `/api/v1/products?page=${page}`;
+
       const { data } = await axios.get(url);
       return data;
     } catch (error) {
