@@ -15,7 +15,7 @@ function Register() {
     })
 
     const [avatar, setAvatar] = useState("");
-    // const [avatarPreview, setAvatarPreview] = useState("./images/profile.png");
+    const [avatarPreview, setAvatarPreview] = useState("./images/profile.png");
 
     const { success, loading, error } = useSelector((state) => state.user);
     const dispatch = useDispatch();
@@ -23,33 +23,31 @@ function Register() {
 
     const registerDataChange = (e) => {
         if (e.target.name === "avatar") {
-            const reader = new FileReader();
-            reader.onload = () => {
-                if (reader.readyState === 2) {
-                    // setAvatarPreview(reader.result)
-                    setAvatar(reader.result)
-                }
-            }
-            reader.readAsDataURL(e.target.files[0]);
+            const file = e.target.files[0];
+
+            if (!file) return;
+
+            setAvatar(file);
+            setAvatarPreview(URL.createObjectURL(file)); // ⚡ faster
         } else {
             setUser({ ...user, [e.target.name]: e.target.value });
         }
-    }
+    };
 
     const registerSubmit = (e) => {
         e.preventDefault();
 
-        if (!name || !email || !password) {
-            toast.error("All fields are required",
+        if (!user.name || !user.email || !user.password) {
+            toast.error("All fields are required in frontend",
                 { position: "top-center", autoClose: 3000 }
             );
             return;
         }
 
         const myForm = new FormData();
-        myForm.set("name", name);
-        myForm.set("email", email);
-        myForm.set("password", password);
+        myForm.set("name", user.name);
+        myForm.set("email", user.email);
+        myForm.set("password", user.password);
         myForm.set("avatar", avatar);
 
         console.log(myForm.entries());
@@ -126,7 +124,7 @@ function Register() {
                         />
 
                         <img
-                            src={`${avatar ? avatar : "./images/profile.png"}`}
+                            src={avatarPreview}
                             alt="Avatar Preview"
                             className="avatar"
                         />
