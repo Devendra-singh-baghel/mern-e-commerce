@@ -4,6 +4,7 @@ dotenv.config({ path: "config/config.env" });
 
 import app from "./app.js";
 import { connectMongoDatabase } from "./config/db.js";
+import { connectCloudinary } from "./config/cloudinary.config.js";
 
 //Global error handler: handle uncaught exception errors
 process.on("uncaughtException", (err) => {
@@ -16,6 +17,7 @@ const port = process.env.PORT || 3000;
 const startServer = async () => {
   try {
     await connectMongoDatabase();
+    connectCloudinary();
 
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);

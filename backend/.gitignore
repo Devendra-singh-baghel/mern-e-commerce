@@ -7,6 +7,10 @@ node_modules/
 backend/config/config.env
 !.env.example
 
+# Temp folder for file upload
+public/temp/*
+!public/temp/.gitkeep
+
 # Logs
 logs
 *.log
