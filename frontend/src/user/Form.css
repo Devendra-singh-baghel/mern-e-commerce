@@ -122,7 +122,7 @@ button:hover {
   /* background: #cf1111; */
 }
 
-.update-container {
+.update_container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -165,7 +165,7 @@ button:hover {
   .tab {
     font-size: 14px;
   }
-  .update-container {
+  .update_container {
     margin-top: 60px;
   }
 }

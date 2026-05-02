@@ -73,7 +73,7 @@ function UserDashboard({ user }) {
                 </div>
 
                 {menuVisible && (
-                    <div className="menu_options">
+                    <div className="menu_options" onClick={toggleMenu}>
                         {options.map((item) => (
                             <button
                                 className="menu_option_btn"

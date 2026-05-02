@@ -14,8 +14,8 @@ function Register() {
         password: ""
     })
 
-    const [avatar, setAvatar] = useState("");
-    const [avatarPreview, setAvatarPreview] = useState("./images/profile.png");
+    const [avatar, setAvatar] = useState(null);
+    const [avatarPreview, setAvatarPreview] = useState("/images/profile.png");
 
     const { success, loading, error } = useSelector((state) => state.user);
     const dispatch = useDispatch();
@@ -27,12 +27,30 @@ function Register() {
 
             if (!file) return;
 
+            if (!file.type.startsWith("image/")) {
+                toast.error("Only image files are allowed");
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+                toast.error("Image must be less than 2MB");
+                return;
+            }
+
             setAvatar(file);
-            setAvatarPreview(URL.createObjectURL(file)); // ⚡ faster
+            setAvatarPreview(URL.createObjectURL(file));
         } else {
             setUser({ ...user, [e.target.name]: e.target.value });
         }
     };
+
+    useEffect(() => {
+        return () => {
+            if (avatarPreview && avatarPreview.startsWith("blob:")) {
+                URL.revokeObjectURL(avatarPreview);
+            }
+        };
+    }, [avatarPreview]);
 
     const registerSubmit = (e) => {
         e.preventDefault();
@@ -50,7 +68,7 @@ function Register() {
         myForm.set("password", user.password);
         myForm.set("avatar", avatar);
 
-        console.log(myForm.entries());
+        // console.log(myForm.entries());
         dispatch(register(myForm));
     }
 
