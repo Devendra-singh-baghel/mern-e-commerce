@@ -33,7 +33,7 @@ router.route("/password/forgot").post(forgotPassword);
 router.route("/password/reset/:token").post(resetPassword);
 
 //Update password
-router.route("/password/update").post(verifyUserAuth, updatePassword);
+router.route("/password/update").put(verifyUserAuth, updatePassword);
 
 //User profile
 router.route("/profile").get(verifyUserAuth, getUserDetails);
