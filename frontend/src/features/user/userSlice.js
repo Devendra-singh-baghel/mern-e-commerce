@@ -77,7 +77,7 @@ export const logout = createAsyncThunk(
   },
 );
 
-//Logout user API
+//Update profile API
 export const updateProfile = createAsyncThunk(
   "user/updateProfile",
   async (userData, { rejectWithValue }) => {
@@ -98,6 +98,33 @@ export const updateProfile = createAsyncThunk(
       return rejectWithValue(
         error.response?.data || {
           message: "Profile update failed. Please try again later",
+        },
+      );
+    }
+  },
+);
+
+//Update password API
+export const updatePassword = createAsyncThunk(
+  "user/updatePassword",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const { data } = await axios.put(
+        "/api/v1/password/update",
+        formData,
+        config,
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || {
+          message: "Password update failed",
         },
       );
     }
@@ -225,6 +252,25 @@ const userSlice = createSlice({
         state.error =
           action.payload?.message ||
           "Profile update failed. Please try again later";
+      });
+
+    //Update password (lifecycle)
+    builder
+      .addCase(updatePassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updatePassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.success = action.payload?.success;
+        state.message = action.payload?.message;
+      })
+      .addCase(updatePassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.payload?.message ||
+          "Password update failed";
       });
   },
 });

@@ -61,10 +61,11 @@ function UserDashboard({ user }) {
             <div className="dashboard_container">
                 <div
                     className="profile_header"
+                    title={user.name}
                     onClick={toggleMenu}
                 >
                     <img
-                        src={user.avatar.url ? user.avatar.url : "./images/profile.png"}
+                        src={user.avatar.url ? user.avatar.url : "/images/profile.png"}
                         alt="Profile Picture"
                         className="profile_avatar"
                     />
