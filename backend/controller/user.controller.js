@@ -4,7 +4,7 @@ import HandleError from "../utils/handleError.js";
 import tokenGenerator from "../utils/tokenGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
-import uploadOnCloudinary from "../utils/cloudinary.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 
 //Register user
 const registerUser = asyncHandler(async (req, res, next) => {
@@ -26,7 +26,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     throw new HandleError("User with this email already exists", 409);
   }
 
-  // Cloudinary mein temp path se upload karo
+  // Upload on Cloudinary from temp path
   const myCloud = await uploadOnCloudinary(avatar.tempFilePath, {
     folder: "avatars",
     width: 150,
@@ -426,6 +426,7 @@ const updatePassword = asyncHandler(async (req, res, next) => {
 const updateUserProfile = asyncHandler(async (req, res, next) => {
   //Step 1: Extract fields from request body
   const { name, email } = req.body;
+  const avatar = req.files?.avatar;
 
   /*
    * Step 2: Prepare update object (only provided fields)
@@ -436,27 +437,58 @@ const updateUserProfile = asyncHandler(async (req, res, next) => {
   if (name) updateData.name = name;
   if (email) updateData.email = email.toLowerCase();
 
-  //Step 3: Ensure at least one field is provided
+  // Step 3: Avatar update logic
+  if (avatar) {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      throw new HandleError("User not found", 404);
+    }
+
+    // Step 3.1: Upload new image first
+    const myCloud = await uploadOnCloudinary(avatar.tempFilePath, {
+      folder: "avatars",
+      width: 150,
+      crop: "scale",
+    });
+
+    if (!myCloud) {
+      throw new HandleError("Avatar upload failed", 500);
+    }
+
+    // Step 3.2: Delete old image (after successful upload)
+    if (user.avatar?.public_id) {
+      await deleteFromCloudinary(user.avatar.public_id);
+    }
+
+    // Step 3.3: Update DB data
+    updateData.avatar = {
+      public_id: myCloud.public_id,
+      url: myCloud.secure_url,
+    };
+  }
+
+  //Step 4: Ensure at least one field is provided
   if (Object.keys(updateData).length === 0) {
     throw new HandleError("Please provide at least one field", 400);
   }
 
-  //Step 4: Update user in database
-  const user = await User.findByIdAndUpdate(req.user.id, updateData, {
+  //Step 5: Update user in database
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, updateData, {
     returnDocument: "after",
     runValidators: true,
   }).select("-password -refreshToken");
 
-  //Step 5: Handle user not found
-  if (!user) {
+  //Step 6: Handle user not found
+  if (!updatedUser) {
     throw new HandleError("User not found", 404);
   }
 
-  //Step 6: Send response
+  //Step 7: Send response
   res.status(200).json({
     success: true,
     message: "Profile updated successfully.",
-    user,
+    user: updatedUser,
   });
 });
 
