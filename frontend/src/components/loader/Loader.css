@@ -2,11 +2,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100vh;
+  width: 100vw;
 }
 
 .loader {
-  border: 10px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid var(--primary-main, #6c5b7b);
+  border: 10px solid rgba(169, 146, 189, 0.712);
+  border-top: 10px solid var(--primary-main, #6c5b7b);
   border-radius: 50%;
   width: 80px;
   height: 80px;

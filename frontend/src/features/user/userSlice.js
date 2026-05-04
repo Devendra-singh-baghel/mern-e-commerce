@@ -131,6 +131,60 @@ export const updatePassword = createAsyncThunk(
   },
 );
 
+//Update password API
+export const forgotPassword = createAsyncThunk(
+  "user/forgotPassword",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const { data } = await axios.post(
+        "/api/v1/password/forgot",
+        formData,
+        config,
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || {
+          message: "Email send failed",
+        },
+      );
+    }
+  },
+);
+
+//Update password API
+export const resetPassword = createAsyncThunk(
+  "user/resetPassword",
+  async ({ token, formData }, { rejectWithValue }) => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const { data } = await axios.post(
+        `/api/v1/password/reset/${token}`,
+        formData,
+        config,
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || {
+          message: "Password reset failed",
+        },
+      );
+    }
+  },
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -268,9 +322,43 @@ const userSlice = createSlice({
       })
       .addCase(updatePassword.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload?.message ||
-          "Password update failed";
+        state.error = action.payload?.message || "Password update failed";
+      });
+
+    //Forgot password (lifecycle)
+    builder
+      .addCase(forgotPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(forgotPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.success = action.payload?.success;
+        state.message = action.payload?.message;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Email send failed";
+      });
+
+    //Reset password (lifecycle)
+    builder
+      .addCase(resetPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.success = action.payload?.success;
+        state.user = null;
+        state.isAuthenticated = false;
+        state.message = action.payload?.message;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Password reset failed";
       });
   },
 });

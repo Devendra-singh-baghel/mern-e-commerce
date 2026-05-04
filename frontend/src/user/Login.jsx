@@ -63,7 +63,7 @@ function Login() {
         <div className="form_container container">
             <div className="form_content">
                 <form className="form" onSubmit={loginSubmit} >
-                    <h2>Sign Up</h2>
+                    <h2>Sign In</h2>
 
                     <div className="input_group">
                         <input
