@@ -4,7 +4,10 @@ import HandleError from "../utils/handleError.js";
 import tokenGenerator from "../utils/tokenGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
-import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  deleteFromCloudinary,
+  uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 
 //Register user
 const registerUser = asyncHandler(async (req, res, next) => {
@@ -188,7 +191,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 //Forgot password
 const forgotPassword = asyncHandler(async (req, res, next) => {
   const { email } = req.body;
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email: email.toLowerCase() });
 
   if (!user) {
     throw new HandleError("User doesn't exist.", 400);
@@ -281,7 +284,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   }
 
   if (password !== confirmPassword) {
-    throw new HandleError("Passwords do not match", 400);
+    throw new HandleError("Password and Confirm Password did not match", 400);
   }
 
   if (password.length < 8) {
