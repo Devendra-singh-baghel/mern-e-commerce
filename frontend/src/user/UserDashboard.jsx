@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import "./UserDashboard.css"
 import { useNavigate } from 'react-router'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { logout, removeSuccess } from '../features/user/userSlice';
 
 function UserDashboard({ user }) {
+
+    const { cartItems } = useSelector((state) => state.cart);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -18,6 +20,7 @@ function UserDashboard({ user }) {
     const options = [
         { name: "Orders", funcName: orders },
         { name: "Account", funcName: profile },
+        { name: `Cart(${cartItems.length})`, funcName: myCart },
         { name: "Logout", funcName: logoutUser },
     ]
 
@@ -33,6 +36,10 @@ function UserDashboard({ user }) {
 
     function profile() {
         navigate("/profile");
+    };
+
+    function myCart() {
+        navigate("/cart");
     };
 
     function logoutUser() {
