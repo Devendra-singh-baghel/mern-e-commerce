@@ -16,6 +16,9 @@ import UpdatePassword from './user/UpdatePassword'
 import ForgotPassword from './user/ForgotPassword'
 import ResetPassword from './user/ResetPassword'
 import Cart from './cart/Cart'
+import Shipping from './cart/Shipping'
+import OrderConfirm from './cart/OrderConfirm'
+import Payment from './cart/Payment'
 
 function App() {
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -44,6 +47,9 @@ function App() {
         <Route path='/profile' element={<ProtectedRoute children={<Profile />} />} />
         <Route path='/profile/update' element={<ProtectedRoute children={<UpdateProfile />} />} />
         <Route path='/password/update' element={<ProtectedRoute children={<UpdatePassword />} />} />
+        <Route path='/shipping' element={<ProtectedRoute children={<Shipping />} />} />
+        <Route path='/order/confirm' element={<ProtectedRoute children={<OrderConfirm />} />} />
+        <Route path='/process/payment' element={<ProtectedRoute children={<Payment />} />} />
       </Routes>
       {isAuthenticated && <UserDashboard user={user} />}
     </Router>

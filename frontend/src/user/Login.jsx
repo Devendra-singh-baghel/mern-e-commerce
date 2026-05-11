@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import "./Form.css"
-import { Link, useNavigate } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux';
 import { login, removeErrors, removeSuccess } from '../features/user/userSlice';
 import Loader from '../components/loader/Loader';
@@ -14,6 +14,9 @@ function Login() {
     const { success, loading, error, isAuthenticated } = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const redirect = new URLSearchParams(location.search).get("redirect") || "/";
 
     const loginSubmit = (e) => {
         e.preventDefault();
@@ -41,7 +44,7 @@ function Login() {
 
     useEffect(() => {
         if (isAuthenticated) {
-            navigate("/");
+            navigate(redirect);
         }
     }, [isAuthenticated]);
 
