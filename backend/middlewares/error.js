@@ -1,7 +1,7 @@
 export default (err, req, res, next) => {
   // Default values
   let statusCode = err.statusCode || 500;
-  let message = err.message || "Internal Server Error.";
+  let message = err.message || err.error?.description || "Internal Server Error.";
   let errors = err.errors || [];
 
   // Handle Mongoose CastError (invalid ObjectId)
