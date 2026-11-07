@@ -8,6 +8,7 @@ import fileUpload from "express-fileupload";
 import user from "./routes/user.routes.js";
 import product from "./routes/product.routes.js";
 import order from "./routes/order.routes.js";
+import payment from "./routes/payment.routes.js";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(fileUpload({ useTempFiles: true, tempFileDir: "./public/temp/" }));
 app.use("/api/v1", user);
 app.use("/api/v1", product);
 app.use("/api/v1", order);
+app.use("/api/v1", payment);
 
 app.use(errorHandleMiddleware);
 export default app;

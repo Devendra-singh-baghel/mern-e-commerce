@@ -28,6 +28,7 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.3.1",
     "nodemailer": "^8.0.4",
+    "razorpay": "^2.9.8",
     "validator": "^13.15.26"
   },
   "devDependencies": {
