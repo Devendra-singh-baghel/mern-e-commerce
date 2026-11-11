@@ -20,6 +20,7 @@ import Shipping from './cart/Shipping'
 import OrderConfirm from './cart/OrderConfirm'
 import Payment from './cart/Payment'
 import PaymentSuccess from './cart/PaymentSuccess'
+import MyOrders from './orders/MyOrders'
 
 function App() {
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -52,6 +53,7 @@ function App() {
         <Route path='/order/confirm' element={<ProtectedRoute children={<OrderConfirm />} />} />
         <Route path='/process/payment' element={<ProtectedRoute children={<Payment />} />} />
         <Route path='/paymentSuccess' element={<ProtectedRoute children={<PaymentSuccess />} />} />
+        <Route path='/orders/user' element={<ProtectedRoute children={<MyOrders />} />} />
       </Routes>
       {isAuthenticated && <UserDashboard user={user} />}
     </Router>
