@@ -32,20 +32,21 @@ function PaymentSuccess() {
                         state: shippingInfo.state,
                         country: shippingInfo.country,
                         pinCode: shippingInfo.pinCode,
-                        phoneNo: shippingInfo.phoneNumber
+                        phoneNumber: shippingInfo.phoneNumber
                     },
                     orderItems: cartItems.map((item) => ({
                         name: item.name,
                         price: item.price,
                         quantity: item.quantity,
                         image: item.image,
-                        product: item.product
+                        product: item.product_id
                     })),
                     paymentInfo: {
                         id: reference,
-                        status: "succeeded"
+                        status: "completed"
                     },
-                    itemsPrice: orderItem.subtotal,
+                    paymentMethod: "Online",
+                    itemsPrice: orderItem.subTotal,
                     taxPrice: orderItem.tax,
                     shippingPrice: orderItem.shippingCharges,
                     totalPrice: orderItem.total
@@ -65,6 +66,7 @@ function PaymentSuccess() {
         if (success) {
             toast.success('Order Created Successfully', { position: 'top-center', autoClose: 3000 });
             dispatch(clearCart());
+            sessionStorage.removeItem("orderItem");
             dispatch(removeSuccess());
         }
     }, [dispatch, success])

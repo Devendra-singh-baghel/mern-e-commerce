@@ -77,7 +77,7 @@ const orderSchema = mongoose.Schema(
     paymentMethod: {
       type: String,
       required: true,
-      enum: ["COD", "Card", "UPI"],
+      enum: ["COD", "Online"],
     },
 
     paidAt: {
