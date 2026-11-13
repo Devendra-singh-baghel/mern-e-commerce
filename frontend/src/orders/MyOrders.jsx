@@ -50,9 +50,9 @@ function MyOrders() {
                                     <td>{order._id}</td>
                                     <td>{order.orderItems.length}</td>
                                     <td>{order.orderStatus}</td>
-                                    <td>${order.totalPrice.toFixed(2)}</td>
+                                    <td>₹{order.totalPrice}/-</td>
                                     <td>
-                                        <Link to={`/orders/${order._id}`}>
+                                        <Link to={`/order/${order._id}`}>
                                             <LaunchOutlined />
                                         </Link>
                                     </td>

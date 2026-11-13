@@ -21,6 +21,7 @@ import OrderConfirm from './cart/OrderConfirm'
 import Payment from './cart/Payment'
 import PaymentSuccess from './cart/PaymentSuccess'
 import MyOrders from './orders/MyOrders'
+import OrderDetails from './orders/OrderDetails'
 
 function App() {
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -29,9 +30,9 @@ function App() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      dispatch(loadUser);
+      dispatch(loadUser());
     }
-  }, [dispatch]);
+  }, [dispatch, isAuthenticated]);
 
   return (
     <Router>
@@ -54,6 +55,7 @@ function App() {
         <Route path='/process/payment' element={<ProtectedRoute children={<Payment />} />} />
         <Route path='/paymentSuccess' element={<ProtectedRoute children={<PaymentSuccess />} />} />
         <Route path='/orders/user' element={<ProtectedRoute children={<MyOrders />} />} />
+        <Route path='/order/:id' element={<ProtectedRoute children={<OrderDetails />} />} />
       </Routes>
       {isAuthenticated && <UserDashboard user={user} />}
     </Router>
