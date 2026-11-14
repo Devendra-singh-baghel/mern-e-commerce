@@ -6,25 +6,28 @@ import Footer from '../../components/footer/Footer'
 import Rating from '../../components/rating/Rating'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { getProductDetails, removeErrors } from '../../features/products/productSlice'
+import { getProductDetails, removeErrors, removeReviewSuccess, submitReview } from '../../features/products/productSlice'
 import { toast } from 'react-toastify'
 import Loader from '../../components/loader/Loader'
 import { addItemsToCart, removeMessage, removeSuccess } from '../../features/cart/cartSlice'
 
 function ProductDetails() {
     const [userRating, setUserRating] = useState(0);
+    const [userReview, setUserReview] = useState("");
     const [quantity, setQuantity] = useState(1);
 
+    // Handle rating change when user selects star rating
     const handleRatingChange = (newRating) => {
         setUserRating(newRating);
     }
 
-    const { loading, error, product } = useSelector((state) => state.product);
+    const { loading, error, product, reviewSuccess, reviewLoading } = useSelector((state) => state.product);
     const { loading: cartLoading, error: cartError, success, message, cartItems } = useSelector((state) => state.cart);
 
     const dispatch = useDispatch();
     const { id } = useParams();
 
+    // Fetch product details on component mount or when product ID changes
     useEffect(() => {
         if (id) {
             dispatch(getProductDetails(id));
@@ -35,6 +38,7 @@ function ProductDetails() {
         }
     }, [dispatch, id])
 
+    // Handle and display error toast notifications for product and cart operations
     useEffect(() => {
         if (error) {
             toast.error(error.message, {
@@ -52,6 +56,7 @@ function ProductDetails() {
         }
     }, [dispatch, error, cartError])
 
+    // Display success notification when item is added to cart and clear messages
     useEffect(() => {
         if (success) {
             toast.success(message, {
@@ -63,6 +68,7 @@ function ProductDetails() {
         }
     }, [dispatch, success, message]);
 
+    // Decrease item quantity ensuring it cannot be less than 1
     const decreaseQuantity = () => {
         if (quantity <= 1) {
             toast.error("Quantity can not be less than 1 !", { position: "top-center", autoClose: 3000 });
@@ -72,6 +78,7 @@ function ProductDetails() {
         setQuantity((qty) => qty - 1)
     }
 
+    // Increase item quantity ensuring it does not exceed available stock
     const increaseQuantity = () => {
         if (product.stock <= quantity) {
             toast.error("Cannot exceed available stock!", { position: "top-center", autoClose: 3000 });
@@ -81,9 +88,32 @@ function ProductDetails() {
         setQuantity((qty) => qty + 1)
     }
 
+    // Dispatch action to add selected product and quantity to cart
     const addToCartHandler = () => {
         dispatch(addItemsToCart({ id, quantity }))
     }
+
+    // Validate and submit product review and rating
+    const handleSubmitReview = (e) => {
+        e.preventDefault();
+        if (!userRating || !userReview.trim()) {
+            toast.error("Please provide both rating and review!", { position: "top-center", autoClose: 3000 });
+            return;
+        }
+        dispatch(submitReview({ rating: userRating, productId: id, comment: userReview }));
+
+    };
+
+    // Reset review form and refresh product details after review is successfully submitted
+    useEffect(() => {
+        if (reviewSuccess) {
+            toast.success("Review submitted successfully!", { position: "top-center", autoClose: 3000 });
+            setUserRating(0);
+            setUserReview("");
+            dispatch(removeReviewSuccess());
+            dispatch(getProductDetails(id)); // Refresh product details to show the new review
+        }
+    }, [dispatch, id, reviewSuccess]);
 
     if (loading) return <Loader />;
 
@@ -150,7 +180,7 @@ function ProductDetails() {
 
                                 </>
                             )}
-                        <form className="review_form">
+                        <form className="review_form" onSubmit={handleSubmitReview}>
                             <h3>Write a Review</h3>
                             <Rating
                                 value={0}
@@ -158,8 +188,19 @@ function ProductDetails() {
                                 onRatingChange={handleRatingChange}
                             />
 
-                            <textarea placeholder="Write your review here.." className="review_input"></textarea>
-                            <button className="submit_review_btn">Submit Review</button>
+                            <textarea
+                                placeholder="Write your review here.."
+                                className="review_input"
+                                value={userReview}
+                                onChange={(e) => setUserReview(e.target.value)}
+                            ></textarea>
+                            <button
+                                className="submit_review_btn"
+                                type="submit"
+                                disabled={reviewLoading}
+                            >
+                                {reviewLoading ? "Submitting...." : "Submit Review"}
+                            </button>
                         </form>
                     </div>
                 </div>
