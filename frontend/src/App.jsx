@@ -22,6 +22,8 @@ import Payment from './cart/Payment'
 import PaymentSuccess from './cart/PaymentSuccess'
 import MyOrders from './orders/MyOrders'
 import OrderDetails from './orders/OrderDetails'
+import Dashboard from './admin/Dashboard'
+import ProductList from './admin/ProductList'
 
 function App() {
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -56,6 +58,8 @@ function App() {
         <Route path='/paymentSuccess' element={<ProtectedRoute children={<PaymentSuccess />} />} />
         <Route path='/orders/user' element={<ProtectedRoute children={<MyOrders />} />} />
         <Route path='/order/:id' element={<ProtectedRoute children={<OrderDetails />} />} />
+        <Route path='/admin/dashboard' element={<ProtectedRoute children={<Dashboard />} adminRoute={true} />} />
+        <Route path='/admin/products' element={<ProtectedRoute children={<ProductList />} adminRoute={true} />} />
       </Routes>
       {isAuthenticated && <UserDashboard user={user} />}
     </Router>
