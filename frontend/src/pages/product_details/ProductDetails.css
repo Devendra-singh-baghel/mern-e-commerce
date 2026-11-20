@@ -23,10 +23,10 @@
   border-radius: 8px;
   background: #fff;
 }
-.product-thumbnails {
+.product_thumbnails {
   margin-top: 20px;
 }
-.thumbnail-image {
+.thumbnail_image {
   width: 80px;
   height: 80px;
   object-fit: cover;
@@ -37,11 +37,11 @@
     border 0.3s;
 }
 
-.thumbnail-image:hover {
+.thumbnail_image:hover {
   transform: scale(1.1);
 }
 
-.thumbnail-image.selected {
+.thumbnail_image.selected {
   box-shadow: 0 0 2px black;
 }
 

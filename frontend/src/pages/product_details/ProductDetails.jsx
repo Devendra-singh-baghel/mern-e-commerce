@@ -15,6 +15,7 @@ function ProductDetails() {
     const [userRating, setUserRating] = useState(0);
     const [userReview, setUserReview] = useState("");
     const [quantity, setQuantity] = useState(1);
+    const [selectedImage, setSelectedImage] = useState("");
 
     // Handle rating change when user selects star rating
     const handleRatingChange = (newRating) => {
@@ -127,10 +128,22 @@ function ProductDetails() {
                 <div className="product_detail_container">
                     <div className="product_image_container">
                         <img
-                            src={product?.image?.[0]?.url}
+                            src={selectedImage || product?.image?.[0]?.url}
                             alt={product?.name}
                             className="product_detail_image"
                         />
+
+                        {product?.image?.length > 1 && (<div className="product_thumbnails">
+                            {product?.image?.map((img, index) => (
+                                <img
+                                    key={index}
+                                    src={img.url}
+                                    alt={product?.name}
+                                    className={`thumbnail_image ${selectedImage === img.url ? "selected" : ""}`}
+                                    onClick={() => setSelectedImage(img.url)}
+                                />
+                            ))}
+                        </div>)}
                     </div>
 
                     <div className="product_info">
