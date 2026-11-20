@@ -2,9 +2,72 @@ import { Product } from "../models/product.model.js";
 import HandleError from "../utils/handleError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiFeatures from "../utils/apiFeatures.js";
+import { v2 as cloudinary } from "cloudinary";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 //Admin - Create Products
 const createProduct = asyncHandler(async (req, res, next) => {
+  let images = [];
+
+  // Check req.files first (express-fileupload FormData)
+  if (req.files && req.files.image) {
+    if (Array.isArray(req.files.image)) {
+      images = req.files.image;
+    } else {
+      images.push(req.files.image);
+    }
+  } else if (req.body.image) {
+    // Check req.body (base64 string or array)
+    if (typeof req.body.image === "string") {
+      images.push(req.body.image);
+    } else if (Array.isArray(req.body.image)) {
+      images = req.body.image;
+    }
+  }
+
+  const imageLinks = [];
+
+  if (images.length === 0) {
+    throw new HandleError("Please upload product images", 400);
+  }
+
+  for (let i = 0; i < images.length; i++) {
+    const item = images[i];
+
+    if (item && item.tempFilePath) {
+      // Local temp file uploaded via express-fileupload
+      const result = await uploadOnCloudinary(item.tempFilePath, {
+        folder: "products",
+      });
+
+      if (result) {
+        imageLinks.push({
+          public_id: result.public_id,
+          url: result.secure_url,
+        });
+      }
+    } else if (typeof item === "string") {
+      // Base64 data URI string
+      try {
+        const result = await cloudinary.uploader.upload(item, {
+          folder: "products",
+        });
+        if (result) {
+          imageLinks.push({
+            public_id: result.public_id,
+            url: result.secure_url,
+          });
+        }
+      } catch (error) {
+        throw new HandleError(error.message || "Failed to upload image", 500);
+      }
+    }
+  }
+
+  if (imageLinks.length === 0) {
+    throw new HandleError("Failed to upload product images", 500);
+  }
+
   /*
    * Prepare product data
    * - Avoid mutating req.body directly
@@ -12,6 +75,7 @@ const createProduct = asyncHandler(async (req, res, next) => {
    */
   const productData = {
     ...req.body,
+    image: imageLinks,
     createdBy: req.user.id,
   };
 
