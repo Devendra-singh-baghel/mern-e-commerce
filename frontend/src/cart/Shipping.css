@@ -83,6 +83,11 @@
   background: var(--primary-dark);
 }
 
+.shipping_submit_btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 select::-webkit-scrollbar {
   width: 8px;
 }

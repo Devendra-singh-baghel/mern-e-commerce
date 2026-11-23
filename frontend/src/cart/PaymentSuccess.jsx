@@ -92,7 +92,7 @@ function PaymentSuccess() {
                         <div className="check_mark"></div>
                     </div>
                     <h1>Order Confirmed!</h1>
-                    <p>Your payment was successful. Reference ID <strong>{reference}</strong></p>
+                    <p className="success_para">Your payment was successful. Reference ID <strong>{reference}</strong></p>
                     <Link className="explore_btn" to="/orders/user">View Orders</Link>
                 </div>
             </div>

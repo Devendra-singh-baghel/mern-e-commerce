@@ -1,4 +1,4 @@
-.home-container {
+.home_container {
   padding: 2rem;
   color: var(--text-primary);
   display: flex;
@@ -8,7 +8,7 @@
   margin-top: 3rem;
 }
 
-.home-heading {
+.home_heading {
   font-size: 2.5rem;
   font-weight: 600;
   margin-bottom: 2rem;
@@ -17,7 +17,7 @@
   text-align: center;
 }
 
-.home-product-container {
+.home_product_container {
   display: flex;
   flex-wrap: wrap;
   gap: 3.5rem;
@@ -27,7 +27,7 @@
 }
 
 @media (max-width: 900px) {
-  .home-product-container {
+  .home_product_container {
     display: flex;
     flex-wrap: wrap;
     gap: 7rem;

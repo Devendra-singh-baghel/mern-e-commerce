@@ -75,7 +75,7 @@
     opacity 0.3s ease,
     visibility 0s 0s;
 }
-.cart-not-empty {
+.cart_not_empty {
   background-color: var(--primary-light);
   color: var(--text-dark);
 }

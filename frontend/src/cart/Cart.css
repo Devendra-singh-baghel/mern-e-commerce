@@ -332,7 +332,7 @@
     color: #666;
   }
 
-  .item_total-price {
+  .item_total_price {
     font-size: 1.1rem;
     font-weight: 600;
     color: #1a1a1a;
@@ -432,6 +432,7 @@ html {
   scroll-behavior: smooth;
 }
 
+.quantity_button:disabled,
 .update_item_btn:disabled,
 .remove_item_btn:disabled,
 .checkout_btn:disabled {

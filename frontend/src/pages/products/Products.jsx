@@ -147,11 +147,11 @@ function Products() {
 
             <Navbar />
 
-            <div className="products-layout">
+            <div className="products_layout">
 
                 {/* Sidebar Filter Section */}
-                <div className="filter-section">
-                    <h3 className="filter-heading">CATEGORIES</h3>
+                <div className="filter_section">
+                    <h3 className="filter_heading">CATEGORIES</h3>
                     <ul>
                         {categories.map((category) => {
                             return (
@@ -166,10 +166,10 @@ function Products() {
                 </div>
 
                 {/* Main Products Section */}
-                <div className="products-section">
+                <div className="products_section">
 
                     {products.length > 0 ? (
-                        <div className="products-product-container">
+                        <div className="products_product_container">
                             {products.map((product) => (
                                 <Product product={product} key={product._id} />
                             ))}

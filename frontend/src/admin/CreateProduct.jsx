@@ -107,11 +107,11 @@ function CreateProduct() {
             <PageTitle title="Create Product" />
             <Navbar />
 
-            <div className="create-product-container">
-                <h1 className="form-title">Create Product</h1>
+            <div className="create_product_container">
+                <h1 className="form_title">Create Product</h1>
 
                 <form
-                    className="product-form"
+                    className="product_form"
                     onSubmit={createProductSubmitHandler}
                     encType="multipart/form-data"
                 >
@@ -121,7 +121,7 @@ function CreateProduct() {
                         required
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="form-input"
+                        className="form_input"
                     />
 
                     <input
@@ -130,7 +130,7 @@ function CreateProduct() {
                         required
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
-                        className="form-input"
+                        className="form_input"
                     />
 
                     <textarea
@@ -140,11 +140,11 @@ function CreateProduct() {
                         onChange={(e) => setDescription(e.target.value)}
                         cols="30"
                         rows="2"
-                        className="form-input"
+                        className="form_input"
                     ></textarea>
 
                     <select
-                        className="form-select"
+                        className="form_select"
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
                         required
@@ -163,35 +163,35 @@ function CreateProduct() {
                         required
                         value={stock}
                         onChange={(e) => setStock(e.target.value)}
-                        className="form-input"
+                        className="form_input"
                     />
 
-                    <div className="file-input-container">
+                    <div className="file_input_container">
                         <input
                             type="file"
                             name="image"
                             accept="image/*"
                             onChange={createProductImagesChange}
                             multiple
-                            className="form-input-file"
+                            className="form_input_file"
                             required
                         />
                     </div>
 
-                    <div className="image-preview-container">
+                    <div className="image_preview_container">
                         {imagesPreview.map((image, index) => (
                             <img
                                 key={index}
                                 src={image}
                                 alt="Product Preview"
-                                className="image-preview"
+                                className="image_preview"
                             />
                         ))}
                     </div>
 
                     <button
                         type="submit"
-                        className="submit-btn"
+                        className="submit_btn"
                         disabled={loading ? true : false}
                     >
                         {loading ? "Creating..." : "Create Product"}

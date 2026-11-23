@@ -9,7 +9,7 @@
   /* background: #000; */
 }
 
-.active-tab {
+.active_tab {
   color: var(--primary-main);
   font-weight: bold;
   border-bottom: 3px solid var(--primary-main);
@@ -83,6 +83,11 @@
   cursor: pointer;
   font-size: 16px;
   transition: background 0.3s;
+}
+
+.auth_btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 button:hover {

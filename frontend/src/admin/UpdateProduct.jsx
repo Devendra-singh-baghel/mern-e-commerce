@@ -110,11 +110,11 @@ function UpdateProduct() {
             <PageTitle title="Update Product" />
             <Navbar />
 
-            <div className="update-product-wrapper">
-                <h1 className="update-product-title">Update Product</h1>
+            <div className="update_product_wrapper">
+                <h1 className="update_product_title">Update Product</h1>
 
                 <form
-                    className="update-product-form"
+                    className="update_product_form"
                     onSubmit={updateProductSubmitHandler}
                     encType="multipart/form-data"
                 >
@@ -126,7 +126,7 @@ function UpdateProduct() {
                             required
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="update-product-input"
+                            className="update_product_input"
                         />
                     </div>
 
@@ -138,7 +138,7 @@ function UpdateProduct() {
                             required
                             value={price}
                             onChange={(e) => setPrice(e.target.value)}
-                            className="update-product-input"
+                            className="update_product_input"
                         />
                     </div>
 
@@ -151,14 +151,14 @@ function UpdateProduct() {
                             onChange={(e) => setDescription(e.target.value)}
                             cols="30"
                             rows="2"
-                            className="update-product-textarea"
+                            className="update_product_textarea"
                         ></textarea>
                     </div>
 
                     <div>
                         <label>Category</label>
                         <select
-                            className="update-product-select"
+                            className="update_product_select"
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
                             required
@@ -180,11 +180,11 @@ function UpdateProduct() {
                             required
                             value={stock}
                             onChange={(e) => setStock(e.target.value)}
-                            className="update-product-input"
+                            className="update_product_input"
                         />
                     </div>
 
-                    <div className="update-product-file-wrapper">
+                    <div className="update_product_file_wrapper">
                         <label>Product Images</label>
                         <input
                             type="file"
@@ -192,20 +192,20 @@ function UpdateProduct() {
                             accept="image/*"
                             onChange={updateProductImagesChange}
                             multiple
-                            className="update-product-file-input"
+                            className="update_product_file_input"
                         />
                     </div>
 
                     {oldImages && oldImages.length > 0 && (
                         <div>
                             <label>Old Images</label>
-                            <div className="update-product-old-images-wrapper">
+                            <div className="update_product_old_images_wrapper">
                                 {oldImages.map((image, index) => (
                                     <img
                                         key={index}
                                         src={image.url}
                                         alt="Old Product"
-                                        className="update-product-old-image"
+                                        className="update_product_old_image"
                                     />
                                 ))}
                             </div>
@@ -215,13 +215,13 @@ function UpdateProduct() {
                     {imagesPreview && imagesPreview.length > 0 && (
                         <div>
                             <label>New Images Preview</label>
-                            <div className="update-product-preview-wrapper">
+                            <div className="update_product_preview_wrapper">
                                 {imagesPreview.map((image, index) => (
                                     <img
                                         key={index}
                                         src={image}
                                         alt="Product Preview"
-                                        className="update-product-preview-image"
+                                        className="update_product_preview_image"
                                     />
                                 ))}
                             </div>
@@ -231,7 +231,7 @@ function UpdateProduct() {
                     <div>
                         <button
                             type="submit"
-                            className="update-product-submit-btn"
+                            className="update_product_submit_btn"
                             disabled={loading ? true : false}
                         >
                             {loading ? "Updating..." : "Update Product"}

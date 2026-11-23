@@ -24,3 +24,8 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
+
+button:disabled,
+input[type="submit"]:disabled {
+  cursor: not-allowed;
+}

@@ -23,16 +23,16 @@ function ImageSlider() {
     }, []);
 
     return (
-        <div className="image-slider-container">
-            <div className="slider-images" style={{ transform: `translatex(-${currentIndex * 100}%)` }}>
+        <div className="image_slider_container">
+            <div className="slider_images" style={{ transform: `translatex(-${currentIndex * 100}%)` }}>
                 {images.map((image, index) => (
-                    <div className="slider-item" key={index}>
+                    <div className="slider_item" key={index}>
                         <img src={image} alt={`Slide ${index + 1}`} />
                     </div>
                 ))}
             </div>
 
-            <div className="slider-dots">
+            <div className="slider_dots">
                 {images.map((_, index) => (
                     <span
                         key={index}

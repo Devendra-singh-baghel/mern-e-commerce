@@ -98,6 +98,11 @@
   border-radius: 4px;
 }
 
+.quantity_button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .quantity_value {
   width: 50px;
   height: 35px;
@@ -121,6 +126,11 @@
 
 .add_to_cart_btn:hover {
   background: var(--bg-secondary);
+}
+
+.add_to_cart_btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .reviews_container {
@@ -158,6 +168,11 @@
 
 .submit_review_btn:hover {
   background: #374759;
+}
+
+.submit_review_btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .reviews_section {

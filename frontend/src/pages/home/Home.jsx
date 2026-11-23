@@ -37,9 +37,9 @@ function Home() {
             <PageTitle title="Home-My Website" />
             <Navbar />
             <ImageSlider />
-            <div className="home-container">
-                <h2 className='home-heading'>Tranding Now</h2>
-                <div className="home-product-container">
+            <div className="home_container">
+                <h2 className='home_heading'>Tranding Now</h2>
+                <div className="home_product_container">
                     {products.map((product) => (
                         <Product product={product} key={product._id} />
                     ))}

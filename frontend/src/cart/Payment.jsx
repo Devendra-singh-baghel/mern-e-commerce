@@ -70,12 +70,12 @@ function Payment() {
 
             <CheckoutPath activePath={2} />
 
-            <div className="payment-container">
-                <Link to="/order/confirm" className="payment-go-back">
+            <div className="payment_container">
+                <Link to="/order/confirm" className="payment_go_back">
                     Go Back
                 </Link>
                 <button
-                    className="payment-btn"
+                    className="payment_btn"
                     onClick={() => completePayment(orderItem.total)}
                 >
                     Pay - ₹{orderItem && orderItem.total}

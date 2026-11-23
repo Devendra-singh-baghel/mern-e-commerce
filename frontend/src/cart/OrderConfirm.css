@@ -78,6 +78,11 @@
   background-color: var(--bg-secondary);
 }
 
+.proceed_btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .confirm_table_container {

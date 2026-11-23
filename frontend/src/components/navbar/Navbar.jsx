@@ -31,12 +31,12 @@ function Navbar() {
 
     return (
         <nav className="navbar">
-            <div className="navbar-container">
-                <div className="navbar-logo">
+            <div className="navbar_container">
+                <div className="navbar_logo">
                     <Link to="/" onClick={() => setIsMenuOpen(false)}>NexCart</Link>
                 </div>
 
-                <div className={`navbar-links ${isMenuOpen ? "active" : ""}`}>
+                <div className={`navbar_links ${isMenuOpen ? "active" : ""}`}>
                     <ul>
                         <li onClick={() => setIsMenuOpen(false)}>
                             <Link to="/">Home</Link>
@@ -53,15 +53,15 @@ function Navbar() {
                     </ul>
                 </div>
 
-                <div className="navbar-icons">
-                    <div className="search-container">
+                <div className="navbar_icons">
+                    <div className="search_container">
                         <form
-                            className={`search-form ${isSearchOpen ? "active" : ""}`}
+                            className={`search_form ${isSearchOpen ? "active" : ""}`}
                             onSubmit={handleSearchSubmit}
                         >
                             <input
                                 type="text"
-                                className="search-input"
+                                className="search_input"
                                 placeholder="Search products..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -69,7 +69,7 @@ function Navbar() {
 
                             <button
                                 type="button"
-                                className="search-icon"
+                                className="search_icon"
                                 onClick={toggleSearch}
                             >
                                 <Search focusable="false" />
@@ -77,19 +77,19 @@ function Navbar() {
                         </form>
                     </div>
 
-                    <div className="cart-container">
+                    <div className="cart_container">
                         <Link to="/cart">
                             <ShoppingCart className="icon" />
-                            <span className="cart-badge">{cartItems.length}</span>
+                            <span className="cart_badge">{cartItems.length}</span>
                         </Link>
                     </div>
 
-                    {!isAuthenticated && <Link to="/register" className="register-link">
+                    {!isAuthenticated && <Link to="/register" className="register_link">
                         <PersonAdd className="icon" />
                     </Link>}
 
                     <div
-                        className="navbar-hamburger"
+                        className="navbar_hamburger"
                         onClick={toggleMenu}
                     >
                         {isMenuOpen ? <Close className="icon" /> : <Menu className="icon" />}
@@ -100,4 +100,4 @@ function Navbar() {
     )
 }
 
-export default Navbar
+export default Navbar;
