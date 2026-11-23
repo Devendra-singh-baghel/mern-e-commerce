@@ -27,20 +27,14 @@ function ResetPassword() {
 
     useEffect(() => {
         if (error) {
-            toast.error(error, {
-                position: "top-center",
-                autoClose: 3000
-            });
+            toast.error(error);
             dispatch(removeErrors());
         }
     }, [dispatch, error]);
 
     useEffect(() => {
         if (success) {
-            toast.success(message, {
-                position: "top-center",
-                autoClose: 3000
-            });
+            toast.success(message);
             dispatch(removeSuccess());
             navigate("/login");
         }

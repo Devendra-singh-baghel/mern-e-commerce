@@ -55,18 +55,12 @@ function CreateProduct() {
         e.preventDefault();
 
         if (!category) {
-            toast.error("Please choose a category", {
-                position: "top-right",
-                autoClose: 3000,
-            });
+            toast.error("Please choose a category");
             return;
         }
 
         if (images.length === 0) {
-            toast.error("Please upload at least one image", {
-                position: "top-right",
-                autoClose: 3000,
-            });
+            toast.error("Please upload at least one image");
             return;
         }
 
@@ -87,18 +81,12 @@ function CreateProduct() {
     // Error and Success handling
     useEffect(() => {
         if (error) {
-            toast.error(error, {
-                position: "top-right",
-                autoClose: 3000,
-            });
+            toast.error(error);
             dispatch(removeError());
         }
 
         if (success) {
-            toast.success("Product Created Successfully", {
-                position: "top-right",
-                autoClose: 3000,
-            });
+            toast.success("Product Created Successfully");
             dispatch(removeSuccess());
 
             setName("");

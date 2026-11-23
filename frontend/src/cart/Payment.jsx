@@ -58,10 +58,7 @@ function Payment() {
             const rzp = new Razorpay(options);
             rzp.open();
         } catch (error) {
-            toast.error(error.message, {
-                position: "top-center",
-                autoClose: 3000
-            });
+            toast.error(error.message);
         }
     }
 

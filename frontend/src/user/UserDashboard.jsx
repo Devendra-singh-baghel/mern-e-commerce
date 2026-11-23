@@ -46,12 +46,12 @@ function UserDashboard({ user }) {
         dispatch(logout())
             .unwrap()
             .then(() => {
-                toast.success("Logout Successful", { position: "top-center", autoClose: 3000 });
+                toast.success("Logout Successful");
                 dispatch(removeSuccess());
                 navigate("/login");
             })
             .catch((error) => {
-                toast.success(error.message || "Logout Failed", { position: "top-center", autoClose: 3000 });
+                toast.error(error.message || "Logout Failed");
             })
     }
 

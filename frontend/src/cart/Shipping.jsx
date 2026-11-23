@@ -75,22 +75,13 @@ function Shipping() {
 
         // Phone validation
         if (phoneNumber.length !== 10) {
-            toast.error(
-                "Invalid phone number! It should contain exactly 10 digits.",
-                {
-                    position: "top-center",
-                    autoClose: 3000,
-                }
-            );
+            toast.error("Invalid phone number! It should contain exactly 10 digits.");
             return;
         }
 
         // PinCode validation
         if (pinCode.length < 5 || pinCode.length > 10) {
-            toast.error("Invalid PinCode!", {
-                position: "top-center",
-                autoClose: 3000,
-            });
+            toast.error("Invalid PinCode!");
             return;
         }
 
@@ -103,10 +94,7 @@ function Shipping() {
             !state ||
             !city
         ) {
-            toast.error("Please fill all shipping details.", {
-                position: "top-center",
-                autoClose: 3000,
-            });
+            toast.error("Please fill all shipping details.");
             return;
         }
 

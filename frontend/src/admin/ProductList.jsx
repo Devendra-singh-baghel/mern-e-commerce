@@ -31,10 +31,7 @@ function ProductList() {
     // Handle delete success notification
     useEffect(() => {
         if (isDeleted) {
-            toast.success("Product Deleted Successfully", {
-                position: "top-right",
-                autoClose: 3000,
-            });
+            toast.success("Product Deleted Successfully");
             dispatch(removeDeleted());
         }
     }, [dispatch, isDeleted]);
@@ -42,10 +39,7 @@ function ProductList() {
     // Handle error notifications
     useEffect(() => {
         if (error) {
-            toast.error(error, {
-                position: "top-right",
-                autoClose: 3000,
-            });
+            toast.error(error);
             dispatch(removeError());
         }
     }, [dispatch, error]);

@@ -18,10 +18,7 @@ function OrderDetails() {
             dispatch(getOrderDetails(id));
         }
         if (error) {
-            toast.error(error, {
-                position: "top-center",
-                autoClose: 3000
-            });
+            toast.error(error);
             dispatch(removeErrors());
         }
     }, [dispatch, id, error]);

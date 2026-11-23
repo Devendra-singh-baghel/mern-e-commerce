@@ -89,26 +89,17 @@ function UpdateProduct() {
     // Error and success handling
     useEffect(() => {
         if (productError) {
-            toast.error(productError?.message || productError, {
-                position: "top-right",
-                autoClose: 3000,
-            });
+            toast.error(productError?.message || productError);
             dispatch(removeErrors());
         }
 
         if (adminError) {
-            toast.error(adminError, {
-                position: "top-right",
-                autoClose: 3000,
-            });
+            toast.error(adminError);
             dispatch(removeError());
         }
 
         if (isUpdated) {
-            toast.success("Product Updated Successfully", {
-                position: "top-right",
-                autoClose: 3000,
-            });
+            toast.success("Product Updated Successfully");
             dispatch(removeUpdated());
             navigate("/admin/products");
         }

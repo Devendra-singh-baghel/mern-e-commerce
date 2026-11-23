@@ -55,7 +55,7 @@ function PaymentSuccess() {
                 dispatch(createOrder(orderData));
             } catch (error) {
                 console.log("Order Creation Error", error.message);
-                toast.error(error.message || 'Order Creation Error', { position: 'top-center', autoClose: 3000 })
+                toast.error(error.message || 'Order Creation Error');
             }
         }
 
@@ -64,7 +64,7 @@ function PaymentSuccess() {
 
     useEffect(() => {
         if (success) {
-            toast.success('Order Created Successfully', { position: 'top-center', autoClose: 3000 });
+            toast.success('Order Created Successfully');
             dispatch(clearCart());
             sessionStorage.removeItem("orderItem");
             dispatch(removeSuccess());
@@ -73,7 +73,7 @@ function PaymentSuccess() {
 
     useEffect(() => {
         if (error) {
-            toast.error(error || 'Order Creation Failed', { position: 'top-center', autoClose: 3000 });
+            toast.error(error || 'Order Creation Failed');
             dispatch(removeErrors());
         }
     }, [dispatch, error])

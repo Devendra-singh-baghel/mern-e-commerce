@@ -16,10 +16,7 @@ function MyOrders() {
     useEffect(() => {
         dispatch(getAllMyOrders());
         if (error) {
-            toast.error(error.message, {
-                position: "top-center",
-                autoClose: 3000
-            });
+            toast.error(error.message);
             dispatch(removeErrors());
         }
     }, [dispatch]);

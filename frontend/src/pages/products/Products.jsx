@@ -82,10 +82,7 @@ function Products() {
      */
     useEffect(() => {
         if (error) {
-            toast.error(error.message, {
-                position: "top-center",
-                autoClose: 3000
-            });
+            toast.error(error.message);
             dispatch(removeErrors());
         }
     }, [dispatch, error]);

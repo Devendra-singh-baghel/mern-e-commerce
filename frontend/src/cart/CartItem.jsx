@@ -12,7 +12,7 @@ function CartItem({ item }) {
 
     const decreaseQuantity = () => {
         if (quantity <= 1) {
-            toast.error("Quantity can not be less than 1 !", { position: "top-center", autoClose: 3000 });
+            toast.error("Quantity can not be less than 1 !");
             dispatch(removeErrors());
             return;
         }
@@ -21,7 +21,7 @@ function CartItem({ item }) {
 
     const increaseQuantity = () => {
         if (item.stock <= quantity) {
-            toast.error("Cannot exceed available stock!", { position: "top-center", autoClose: 3000 });
+            toast.error("Cannot exceed available stock!");
             dispatch(removeErrors());
             return;
         }
@@ -47,18 +47,12 @@ function CartItem({ item }) {
 
         dispatch(removeItemFromCart(item.product_id));
 
-        toast.success("Item removed successfully!", {
-            position: "top-center",
-            autoClose: 3000
-        });
+        toast.success("Item removed successfully!");
     }
 
     useEffect(() => {
         if (error) {
-            toast.error(error.message, {
-                position: "top-center",
-                autoClose: 3000
-            });
+            toast.error(error.message);
             dispatch(removeErrors());
         }
     }, [dispatch, error])

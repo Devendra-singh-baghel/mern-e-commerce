@@ -22,9 +22,7 @@ function Login() {
         e.preventDefault();
 
         if (!loginEmail || !loginPassword) {
-            toast.error("All fields are required",
-                { position: "top-center", autoClose: 3000 }
-            );
+            toast.error("All fields are required");
             return;
         }
 
@@ -33,10 +31,7 @@ function Login() {
 
     useEffect(() => {
         if (error) {
-            toast.error(error, {
-                position: "top-center",
-                autoClose: 3000
-            });
+            toast.error(error);
             dispatch(removeErrors());
         }
     }, [dispatch, error]);
@@ -50,10 +45,7 @@ function Login() {
 
     useEffect(() => {
         if (success) {
-            toast.success("Login Successful", {
-                position: "top-center",
-                autoClose: 3000
-            });
+            toast.success("Login Successful");
             dispatch(removeSuccess());
         }
     }, [dispatch, success]);

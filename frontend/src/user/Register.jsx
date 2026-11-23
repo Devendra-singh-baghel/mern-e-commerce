@@ -56,9 +56,7 @@ function Register() {
         e.preventDefault();
 
         if (!user.name || !user.email || !user.password) {
-            toast.error("All fields are required in frontend",
-                { position: "top-center", autoClose: 3000 }
-            );
+            toast.error("All fields are required in frontend");
             return;
         }
 
@@ -74,20 +72,14 @@ function Register() {
 
     useEffect(() => {
         if (error) {
-            toast.error(error, {
-                position: "top-center",
-                autoClose: 3000
-            });
+            toast.error(error);
             dispatch(removeErrors());
         }
     }, [dispatch, error]);
 
     useEffect(() => {
         if (success) {
-            toast.success("Registration Successful", {
-                position: "top-center",
-                autoClose: 3000
-            });
+            toast.success("Registration Successful");
             dispatch(removeSuccess());
             navigate("/login"); //in future i will be change it
         }

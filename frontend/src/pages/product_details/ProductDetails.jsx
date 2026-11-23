@@ -42,28 +42,19 @@ function ProductDetails() {
     // Handle and display error toast notifications for product and cart operations
     useEffect(() => {
         if (error) {
-            toast.error(error.message, {
-                position: "top-center",
-                autoClose: 3000
-            });
+            toast.error(error.message);
             dispatch(removeErrors());
         }
 
         if (cartError) {
-            toast.error(cartError.message, {
-                position: "top-center",
-                autoClose: 3000
-            });
+            toast.error(cartError.message);
         }
     }, [dispatch, error, cartError])
 
     // Display success notification when item is added to cart and clear messages
     useEffect(() => {
         if (success) {
-            toast.success(message, {
-                position: "top-center",
-                autoClose: 3000
-            });
+            toast.success(message);
             dispatch(removeSuccess());
             dispatch(removeMessage());
         }
@@ -72,7 +63,7 @@ function ProductDetails() {
     // Decrease item quantity ensuring it cannot be less than 1
     const decreaseQuantity = () => {
         if (quantity <= 1) {
-            toast.error("Quantity can not be less than 1 !", { position: "top-center", autoClose: 3000 });
+            toast.error("Quantity can not be less than 1 !");
             dispatch(removeErrors());
             return;
         }
@@ -82,7 +73,7 @@ function ProductDetails() {
     // Increase item quantity ensuring it does not exceed available stock
     const increaseQuantity = () => {
         if (product.stock <= quantity) {
-            toast.error("Cannot exceed available stock!", { position: "top-center", autoClose: 3000 });
+            toast.error("Cannot exceed available stock!");
             dispatch(removeErrors());
             return;
         }
@@ -98,7 +89,7 @@ function ProductDetails() {
     const handleSubmitReview = (e) => {
         e.preventDefault();
         if (!userRating || !userReview.trim()) {
-            toast.error("Please provide both rating and review!", { position: "top-center", autoClose: 3000 });
+            toast.error("Please provide both rating and review!");
             return;
         }
         dispatch(submitReview({ rating: userRating, productId: id, comment: userReview }));
@@ -108,7 +99,7 @@ function ProductDetails() {
     // Reset review form and refresh product details after review is successfully submitted
     useEffect(() => {
         if (reviewSuccess) {
-            toast.success("Review submitted successfully!", { position: "top-center", autoClose: 3000 });
+            toast.success("Review submitted successfully!");
             setUserRating(0);
             setUserReview("");
             dispatch(removeReviewSuccess());
