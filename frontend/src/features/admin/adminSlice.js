@@ -71,15 +71,80 @@ export const deleteProduct = createAsyncThunk(
     }
 );
 
+// Get all users (Admin)
+export const getAllUsers = createAsyncThunk(
+    'admin/getAllUsers',
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await axios.get('/api/v1/admin/users');
+            return data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || "An error occurred while fetching users.",
+            );
+        }
+    }
+);
+
+// Get single user details (Admin)
+export const getSingleUser = createAsyncThunk(
+    'admin/getSingleUser',
+    async (id, { rejectWithValue }) => {
+        try {
+            const { data } = await axios.get(`/api/v1/admin/user/${id}`);
+            return data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || "An error occurred while fetching user details.",
+            );
+        }
+    }
+);
+
+// Update user role (Admin)
+export const updateUserRole = createAsyncThunk(
+    'admin/updateUserRole',
+    async ({ id, role }, { rejectWithValue }) => {
+        try {
+            const { data } = await axios.patch(`/api/v1/admin/user/${id}`, { role });
+            return data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || "An error occurred while updating user role.",
+            );
+        }
+    }
+);
+
+// Delete user (Admin)
+export const deleteUser = createAsyncThunk(
+    'admin/deleteUser',
+    async (id, { rejectWithValue }) => {
+        try {
+            const { data } = await axios.delete(`/api/v1/admin/user/${id}`);
+            return { id, ...data };
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || "An error occurred while deleting user.",
+            );
+        }
+    }
+);
+
 const adminSlice = createSlice({
     name: 'admin',
     initialState: {
         products: [],
         product: {},
+        users: [],
+        singleUser: {},
         success: false,
         isUpdated: false,
         isDeleted: false,
+        userUpdated: false,
+        userDeleted: false,
         deletingProductId: null,
+        deletingUserId: null,
         loading: false,
         error: null,
     },
@@ -95,6 +160,13 @@ const adminSlice = createSlice({
         },
         removeDeleted: (state) => {
             state.isDeleted = false;
+        },
+        removeUserUpdated: (state) => {
+            state.userUpdated = false;
+            state.singleUser = {};
+        },
+        removeUserDeleted: (state) => {
+            state.userDeleted = false;
         }
     },
     extraReducers: (builder) => {
@@ -161,9 +233,85 @@ const adminSlice = createSlice({
                 state.loading = false;
                 state.deletingProductId = null;
                 state.error = action.payload?.message || "Failed to delete product.";
+            })
+
+            // Get all users
+            .addCase(getAllUsers.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getAllUsers.fulfilled, (state, action) => {
+                state.loading = false;
+                state.users = action.payload.users;
+            })
+            .addCase(getAllUsers.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload?.message || "Failed to fetch users.";
+            })
+
+            // Get single user
+            .addCase(getSingleUser.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getSingleUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.singleUser = action.payload.user;
+            })
+            .addCase(getSingleUser.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload?.message || "Failed to fetch user details.";
+            })
+
+            // Update user role
+            .addCase(updateUserRole.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateUserRole.fulfilled, (state, action) => {
+                state.loading = false;
+                state.userUpdated = action.payload.success;
+                state.singleUser = action.payload.user;
+                if (state.users && state.users.length > 0) {
+                    state.users = state.users.map((user) =>
+                        user._id === action.payload.user?._id ? action.payload.user : user
+                    );
+                }
+            })
+            .addCase(updateUserRole.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload?.message || "Failed to update user role.";
+            })
+
+            // Delete user
+            .addCase(deleteUser.pending, (state, action) => {
+                state.loading = true;
+                state.error = null;
+                state.deletingUserId = action.meta.arg;
+            })
+            .addCase(deleteUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.deletingUserId = null;
+                state.userDeleted = action.payload.success;
+                state.users = state.users.filter(
+                    (user) => user._id !== action.payload.id
+                );
+            })
+            .addCase(deleteUser.rejected, (state, action) => {
+                state.loading = false;
+                state.deletingUserId = null;
+                state.error = action.payload?.message || "Failed to delete user.";
             });
     }
 });
 
-export const { removeError, removeSuccess, removeUpdated, removeDeleted } = adminSlice.actions;
+export const {
+    removeError,
+    removeSuccess,
+    removeUpdated,
+    removeDeleted,
+    removeUserUpdated,
+    removeUserDeleted,
+} = adminSlice.actions;
+
 export default adminSlice.reducer;

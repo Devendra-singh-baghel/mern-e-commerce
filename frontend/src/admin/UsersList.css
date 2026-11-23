@@ -1,0 +1,160 @@
+.users_list_container,
+.usersList-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-height: 70vh;
+  margin-top: 100px;
+}
+
+.users_list_title,
+.usersList-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.users_list_table_container,
+.usersList-table-container {
+  margin-top: 10px;
+  overflow-x: auto;
+}
+
+.users_list_table,
+.usersList-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.users_list_table th,
+.users_list_table td,
+.usersList-table th,
+.usersList-table td {
+  text-align: left;
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+.users_list_table th,
+.usersList-table th {
+  background-color: var(--bg-secondary);
+  color: #fff;
+}
+
+.users_list_table tr:nth-child(even),
+.usersList-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.action_icon,
+.action-icon {
+  margin-right: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.edit_icon,
+.edit-icon {
+  color: var(--primary-main);
+}
+
+.edit_icon:hover,
+.edit-icon:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+.delete_icon,
+.delete-icon {
+  color: #f7364a;
+  border: none;
+  background-color: transparent;
+}
+
+.delete_icon:hover,
+.delete-icon:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #f3253a;
+}
+
+.delete_icon:disabled,
+.delete-icon:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.role_admin {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.role_user {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.loading_message,
+.loading-message {
+  font-size: 18px;
+  color: #555;
+  text-align: center;
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .users_list_table,
+  .usersList-table {
+    font-size: 14px;
+  }
+
+  .users_list_table th,
+  .users_list_table td,
+  .usersList-table th,
+  .usersList-table td {
+    padding: 8px;
+  }
+
+  .users_list_table th,
+  .usersList-table th {
+    font-size: 16px;
+  }
+
+  .action_icon,
+  .action-icon {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .users_list_title,
+  .usersList-title {
+    font-size: 20px;
+  }
+
+  .users_list_table th,
+  .users_list_table td,
+  .usersList-table th,
+  .usersList-table td {
+    padding: 6px;
+  }
+
+  .users_list_table th,
+  .usersList-table th {
+    font-size: 14px;
+  }
+
+  .action_icon,
+  .action-icon {
+    font-size: 16px;
+  }
+}

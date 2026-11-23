@@ -580,6 +580,14 @@ const deleteUser = asyncHandler(async (req, res, next) => {
     throw new HandleError("User not found", 404);
   }
 
+  if (user.avatar?.public_id) {
+    try {
+      await deleteFromCloudinary(user.avatar.public_id);
+    } catch (error) {
+      console.error("Cloudinary delete failed:", error.message);
+    }
+  }
+
   res.status(200).json({
     success: true,
     message: "User deleted successfully",
