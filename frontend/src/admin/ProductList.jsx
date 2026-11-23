@@ -6,19 +6,38 @@ import Footer from '../components/footer/Footer'
 import { Link } from 'react-router'
 import { Delete, Edit } from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchAdminProducts, removeError } from '../features/admin/adminSlice'
+import { deleteProduct, fetchAdminProducts, removeDeleted, removeError } from '../features/admin/adminSlice'
 import Loader from '../components/loader/Loader'
 import NoProducts from '../components/no_products/NoProducts'
 import { toast } from 'react-toastify'
 
 function ProductList() {
-    const { products, loading, error } = useSelector(state => state.admin);
+    const { products, loading, error, isDeleted } = useSelector(state => state.admin);
     const dispatch = useDispatch();
 
     // Fetch admin products on component mount
     useEffect(() => {
         dispatch(fetchAdminProducts());
     }, [dispatch]);
+
+    // Handle delete action
+    const deleteProductHandler = (id) => {
+        const isConfirmed = window.confirm("Are you sure you want to delete this product?");
+        if (isConfirmed) {
+            dispatch(deleteProduct(id));
+        }
+    };
+
+    // Handle delete success notification
+    useEffect(() => {
+        if (isDeleted) {
+            toast.success("Product Deleted Successfully", {
+                position: "top-right",
+                autoClose: 3000,
+            });
+            dispatch(removeDeleted());
+        }
+    }, [dispatch, isDeleted]);
 
     // Handle error notifications
     useEffect(() => {
@@ -31,7 +50,6 @@ function ProductList() {
         }
     }, [dispatch, error]);
 
-    if (loading) return <Loader />;
 
     return (
         <>
@@ -74,11 +92,12 @@ function ProductList() {
                                             className="action_icon edit_icon"
                                         > <Edit />Edit
                                         </Link>
-                                        <Link
-                                            to={`/admin/product/${product._id}`}
+                                        <button
+                                            type="button"
+                                            onClick={() => deleteProductHandler(product._id)}
                                             className="action_icon delete_icon"
                                         > <Delete />Delete
-                                        </Link>
+                                        </button>
                                     </td>
                                 </tr>
                             ))}

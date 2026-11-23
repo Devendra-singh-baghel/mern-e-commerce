@@ -3,7 +3,7 @@ import HandleError from "../utils/handleError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiFeatures from "../utils/apiFeatures.js";
 import { v2 as cloudinary } from "cloudinary";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
 
 //Admin - Create Products
 const createProduct = asyncHandler(async (req, res, next) => {
@@ -282,16 +282,95 @@ const deleteReview = asyncHandler(async (req, res, next) => {
 const updateProduct = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
 
-  const product = await Product.findByIdAndUpdate(id, req.body, {
-    // new:true   // return updated document but deprecated in newer versions of Mongoose.
-    // returnDocument: "before", // return old document (before update)
-    returnDocument: "after", // return updated document (after update)
-    runValidators: true, // ensures schema validations are applied during update operations
-  });
+  let product = await Product.findById(id);
 
   if (!product) {
     throw new HandleError("Product Not Found.", 404);
   }
+
+  let images = [];
+
+  // Check req.files first (express-fileupload FormData)
+  if (req.files && req.files.image) {
+    if (Array.isArray(req.files.image)) {
+      images = req.files.image;
+    } else {
+      images.push(req.files.image);
+    }
+  } else if (req.body.image) {
+    // Check req.body (base64 string or array)
+    if (typeof req.body.image === "string" && req.body.image.trim() !== "") {
+      images.push(req.body.image);
+    } else if (Array.isArray(req.body.image)) {
+      const validImages = req.body.image.filter(
+        (img) => typeof img === "string" && img.trim() !== ""
+      );
+      if (validImages.length > 0) {
+        images = validImages;
+      }
+    }
+  }
+
+  // If new images were provided, upload them first, then delete old images
+  if (images.length > 0) {
+    const imageLinks = [];
+
+    for (let i = 0; i < images.length; i++) {
+      const item = images[i];
+
+      if (item && item.tempFilePath) {
+        // Local temp file uploaded via express-fileupload
+        const result = await uploadOnCloudinary(item.tempFilePath, {
+          folder: "products",
+        });
+
+        if (result) {
+          imageLinks.push({
+            public_id: result.public_id,
+            url: result.secure_url,
+          });
+        }
+      } else if (typeof item === "string") {
+        // Base64 data URI string
+        try {
+          const result = await cloudinary.uploader.upload(item, {
+            folder: "products",
+          });
+          if (result) {
+            imageLinks.push({
+              public_id: result.public_id,
+              url: result.secure_url,
+            });
+          }
+        } catch (error) {
+          throw new HandleError(error.message || "Failed to upload image", 500);
+        }
+      }
+    }
+
+    if (imageLinks.length === 0) {
+      throw new HandleError("Failed to upload new product images", 500);
+    }
+
+    // Delete existing images from Cloudinary ONLY after new images uploaded successfully
+    if (product.image && product.image.length > 0) {
+      for (let i = 0; i < product.image.length; i++) {
+        if (product.image[i].public_id) {
+          await deleteFromCloudinary(product.image[i].public_id);
+        }
+      }
+    }
+
+    req.body.image = imageLinks;
+  } else {
+    // If no new images uploaded, prevent overwriting existing images in DB
+    delete req.body.image;
+  }
+
+  product = await Product.findByIdAndUpdate(id, req.body, {
+    returnDocument: "after",
+    runValidators: true,
+  });
 
   res.status(200).json({
     success: true,
@@ -304,11 +383,22 @@ const updateProduct = asyncHandler(async (req, res, next) => {
 const deleteProduct = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
 
-  const product = await Product.findByIdAndDelete(id);
+  const product = await Product.findById(id);
 
   if (!product) {
     throw new HandleError("Product Not Found.", 404);
   }
+
+  // Deleting images from Cloudinary
+  if (product.image && product.image.length > 0) {
+    for (let i = 0; i < product.image.length; i++) {
+      if (product.image[i].public_id) {
+        await deleteFromCloudinary(product.image[i].public_id);
+      }
+    }
+  }
+
+  await product.deleteOne();
 
   res.status(200).json({
     success: true,

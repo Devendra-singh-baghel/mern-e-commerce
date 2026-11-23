@@ -16,7 +16,7 @@ export const fetchAdminProducts = createAsyncThunk(
     }
 );
 
-// Create new product
+// Create new product (Admin)
 export const createProduct = createAsyncThunk(
     'admin/createProduct',
     async (productData, { rejectWithValue }) => {
@@ -36,11 +36,49 @@ export const createProduct = createAsyncThunk(
     }
 );
 
+// Update product (Admin)
+export const updateProduct = createAsyncThunk(
+    'admin/updateProduct',
+    async ({ id, productData }, { rejectWithValue }) => {
+        try {
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            };
+            const { data } = await axios.patch(`/api/v1/admin/product/${id}`, productData, config);
+            return data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || "An error occurred while updating product.",
+            );
+        }
+    }
+);
+
+// Delete product (Admin)
+export const deleteProduct = createAsyncThunk(
+    'admin/deleteProduct',
+    async (id, { rejectWithValue }) => {
+        try {
+            const { data } = await axios.delete(`/api/v1/admin/product/${id}`);
+            return { id, ...data };
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || "An error occurred while deleting product.",
+            );
+        }
+    }
+);
+
 const adminSlice = createSlice({
     name: 'admin',
     initialState: {
         products: [],
+        product: {},
         success: false,
+        isUpdated: false,
+        isDeleted: false,
         loading: false,
         error: null,
     },
@@ -50,6 +88,12 @@ const adminSlice = createSlice({
         },
         removeSuccess: (state) => {
             state.success = false;
+        },
+        removeUpdated: (state) => {
+            state.isUpdated = false;
+        },
+        removeDeleted: (state) => {
+            state.isDeleted = false;
         }
     },
     extraReducers: (builder) => {
@@ -81,9 +125,41 @@ const adminSlice = createSlice({
             .addCase(createProduct.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload?.message || "Failed to create product.";
+            })
+
+            // Update product
+            .addCase(updateProduct.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.isUpdated = action.payload.success;
+                state.product = action.payload.product;
+            })
+            .addCase(updateProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload?.message || "Failed to update product.";
+            })
+
+            // Delete product
+            .addCase(deleteProduct.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(deleteProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.isDeleted = action.payload.success;
+                state.products = state.products.filter(
+                    (product) => product._id !== action.payload.id
+                );
+            })
+            .addCase(deleteProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload?.message || "Failed to delete product.";
             });
     }
 });
 
-export const { removeError, removeSuccess } = adminSlice.actions;
+export const { removeError, removeSuccess, removeUpdated, removeDeleted } = adminSlice.actions;
 export default adminSlice.reducer;
