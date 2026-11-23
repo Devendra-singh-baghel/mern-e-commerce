@@ -79,6 +79,7 @@ const adminSlice = createSlice({
         success: false,
         isUpdated: false,
         isDeleted: false,
+        deletingProductId: null,
         loading: false,
         error: null,
     },
@@ -143,12 +144,14 @@ const adminSlice = createSlice({
             })
 
             // Delete product
-            .addCase(deleteProduct.pending, (state) => {
+            .addCase(deleteProduct.pending, (state, action) => {
                 state.loading = true;
                 state.error = null;
+                state.deletingProductId = action.meta.arg;
             })
             .addCase(deleteProduct.fulfilled, (state, action) => {
                 state.loading = false;
+                state.deletingProductId = null;
                 state.isDeleted = action.payload.success;
                 state.products = state.products.filter(
                     (product) => product._id !== action.payload.id
@@ -156,6 +159,7 @@ const adminSlice = createSlice({
             })
             .addCase(deleteProduct.rejected, (state, action) => {
                 state.loading = false;
+                state.deletingProductId = null;
                 state.error = action.payload?.message || "Failed to delete product.";
             });
     }

@@ -12,7 +12,7 @@ import NoProducts from '../components/no_products/NoProducts'
 import { toast } from 'react-toastify'
 
 function ProductList() {
-    const { products, loading, error, isDeleted } = useSelector(state => state.admin);
+    const { products, loading, error, isDeleted, deletingProductId } = useSelector(state => state.admin);
     const dispatch = useDispatch();
 
     // Fetch admin products on component mount
@@ -84,13 +84,16 @@ function ProductList() {
                                         <Link
                                             to={`/admin/product/${product._id}`}
                                             className="action_icon edit_icon"
-                                        > <Edit />Edit
+                                        >
+                                            <Edit />
                                         </Link>
                                         <button
                                             type="button"
                                             onClick={() => deleteProductHandler(product._id)}
                                             className="action_icon delete_icon"
-                                        > <Delete />Delete
+                                            disabled={deletingProductId === product._id}
+                                        >
+                                            <Delete />
                                         </button>
                                     </td>
                                 </tr>

@@ -79,6 +79,15 @@
     color: #f66675;
 }
 
+.delete_icon:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.delete_icon:disabled:hover {
+    background-color: transparent;
+}
+
 .no_admin_products {
     text-align: center;
     padding: 30px;
