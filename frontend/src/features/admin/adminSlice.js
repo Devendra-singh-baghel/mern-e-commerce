@@ -131,6 +131,36 @@ export const deleteUser = createAsyncThunk(
     }
 );
 
+// Get all orders (Admin)
+export const getAllOrders = createAsyncThunk(
+    'admin/getAllOrders',
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await axios.get('/api/v1/admin/orders');
+            return data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || "An error occurred while fetching orders.",
+            );
+        }
+    }
+);
+
+// Delete order (Admin)
+export const deleteOrder = createAsyncThunk(
+    'admin/deleteOrder',
+    async (id, { rejectWithValue }) => {
+        try {
+            const { data } = await axios.delete(`/api/v1/admin/order/${id}`);
+            return { id, ...data };
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || "An error occurred while deleting order.",
+            );
+        }
+    }
+);
+
 const adminSlice = createSlice({
     name: 'admin',
     initialState: {
@@ -138,13 +168,17 @@ const adminSlice = createSlice({
         product: {},
         users: [],
         singleUser: {},
+        orders: [],
+        totalAmount: 0,
         success: false,
         isUpdated: false,
         isDeleted: false,
         userUpdated: false,
         userDeleted: false,
+        orderDeleted: false,
         deletingProductId: null,
         deletingUserId: null,
+        deletingOrderId: null,
         loading: false,
         error: null,
     },
@@ -167,6 +201,9 @@ const adminSlice = createSlice({
         },
         removeUserDeleted: (state) => {
             state.userDeleted = false;
+        },
+        removeOrderDeleted: (state) => {
+            state.orderDeleted = false;
         }
     },
     extraReducers: (builder) => {
@@ -301,6 +338,41 @@ const adminSlice = createSlice({
                 state.loading = false;
                 state.deletingUserId = null;
                 state.error = action.payload?.message || "Failed to delete user.";
+            })
+
+            // Get all orders (Admin)
+            .addCase(getAllOrders.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getAllOrders.fulfilled, (state, action) => {
+                state.loading = false;
+                state.orders = action.payload.orders;
+                state.totalAmount = action.payload.totalAmount;
+            })
+            .addCase(getAllOrders.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload?.message || "Failed to fetch orders.";
+            })
+
+            // Delete order (Admin)
+            .addCase(deleteOrder.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                state.deletingOrderId = action.meta.arg;
+            })
+            .addCase(deleteOrder.fulfilled, (state, action) => {
+                state.loading = false;
+                state.deletingOrderId = null;
+                state.orderDeleted = action.payload.success;
+                state.orders = state.orders.filter(
+                    (order) => order._id !== action.payload.id
+                );
+            })
+            .addCase(deleteOrder.rejected, (state, action) => {
+                state.loading = false;
+                state.deletingOrderId = null;
+                state.error = action.payload?.message || "Failed to delete order.";
             });
     }
 });
@@ -312,6 +384,7 @@ export const {
     removeDeleted,
     removeUserUpdated,
     removeUserDeleted,
+    removeOrderDeleted,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;
