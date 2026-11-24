@@ -161,6 +161,26 @@ export const deleteOrder = createAsyncThunk(
     }
 );
 
+// Update order status (Admin)
+export const updateOrderStatus = createAsyncThunk(
+    'admin/updateOrderStatus',
+    async ({ id, status }, { rejectWithValue }) => {
+        try {
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+            const { data } = await axios.patch(`/api/v1/admin/order/${id}`, { status }, config);
+            return data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || "An error occurred while updating order status.",
+            );
+        }
+    }
+);
+
 const adminSlice = createSlice({
     name: 'admin',
     initialState: {
@@ -176,6 +196,7 @@ const adminSlice = createSlice({
         userUpdated: false,
         userDeleted: false,
         orderDeleted: false,
+        orderUpdated: false,
         deletingProductId: null,
         deletingUserId: null,
         deletingOrderId: null,
@@ -204,6 +225,9 @@ const adminSlice = createSlice({
         },
         removeOrderDeleted: (state) => {
             state.orderDeleted = false;
+        },
+        removeOrderUpdated: (state) => {
+            state.orderUpdated = false;
         }
     },
     extraReducers: (builder) => {
@@ -373,6 +397,20 @@ const adminSlice = createSlice({
                 state.loading = false;
                 state.deletingOrderId = null;
                 state.error = action.payload?.message || "Failed to delete order.";
+            })
+
+            // Update order status (Admin)
+            .addCase(updateOrderStatus.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateOrderStatus.fulfilled, (state, action) => {
+                state.loading = false;
+                state.orderUpdated = action.payload.success;
+            })
+            .addCase(updateOrderStatus.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload?.message || "Failed to update order status.";
             });
     }
 });
@@ -385,6 +423,7 @@ export const {
     removeUserUpdated,
     removeUserDeleted,
     removeOrderDeleted,
+    removeOrderUpdated,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;
