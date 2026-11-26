@@ -181,6 +181,36 @@ export const updateOrderStatus = createAsyncThunk(
     }
 );
 
+// Get all reviews of a product (Admin)
+export const getAllReviews = createAsyncThunk(
+    'admin/getAllReviews',
+    async (productId, { rejectWithValue }) => {
+        try {
+            const { data } = await axios.get(`/api/v1/admin/reviews/${productId}`);
+            return data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || "An error occurred while fetching reviews.",
+            );
+        }
+    }
+);
+
+// Delete review (Admin)
+export const deleteReview = createAsyncThunk(
+    'admin/deleteReview',
+    async ({ productId, reviewId }, { rejectWithValue }) => {
+        try {
+            const { data } = await axios.delete(`/api/v1/admin/review/${productId}/${reviewId}`);
+            return { reviewId, ...data };
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || "An error occurred while deleting review.",
+            );
+        }
+    }
+);
+
 const adminSlice = createSlice({
     name: 'admin',
     initialState: {
@@ -190,6 +220,7 @@ const adminSlice = createSlice({
         singleUser: {},
         orders: [],
         totalAmount: 0,
+        reviews: [],
         success: false,
         isUpdated: false,
         isDeleted: false,
@@ -197,9 +228,11 @@ const adminSlice = createSlice({
         userDeleted: false,
         orderDeleted: false,
         orderUpdated: false,
+        isReviewDeleted: false,
         deletingProductId: null,
         deletingUserId: null,
         deletingOrderId: null,
+        deletingReviewId: null,
         loading: false,
         error: null,
     },
@@ -228,6 +261,12 @@ const adminSlice = createSlice({
         },
         removeOrderUpdated: (state) => {
             state.orderUpdated = false;
+        },
+        removeReviewDeleted: (state) => {
+            state.isReviewDeleted = false;
+        },
+        clearReviews: (state) => {
+            state.reviews = [];
         }
     },
     extraReducers: (builder) => {
@@ -411,6 +450,41 @@ const adminSlice = createSlice({
             .addCase(updateOrderStatus.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload?.message || "Failed to update order status.";
+            })
+
+            // Get all reviews (Admin)
+            .addCase(getAllReviews.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getAllReviews.fulfilled, (state, action) => {
+                state.loading = false;
+                state.reviews = action.payload.reviews;
+            })
+            .addCase(getAllReviews.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload?.message || "Failed to fetch reviews.";
+                state.reviews = [];
+            })
+
+            // Delete review (Admin)
+            .addCase(deleteReview.pending, (state, action) => {
+                state.loading = true;
+                state.error = null;
+                state.deletingReviewId = action.meta.arg.reviewId;
+            })
+            .addCase(deleteReview.fulfilled, (state, action) => {
+                state.loading = false;
+                state.deletingReviewId = null;
+                state.isReviewDeleted = action.payload.success;
+                state.reviews = state.reviews.filter(
+                    (review) => review._id !== action.payload.reviewId
+                );
+            })
+            .addCase(deleteReview.rejected, (state, action) => {
+                state.loading = false;
+                state.deletingReviewId = null;
+                state.error = action.payload?.message || "Failed to delete review.";
             });
     }
 });
@@ -424,6 +498,8 @@ export const {
     removeUserDeleted,
     removeOrderDeleted,
     removeOrderUpdated,
+    removeReviewDeleted,
+    clearReviews,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

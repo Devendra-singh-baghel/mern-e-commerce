@@ -30,6 +30,7 @@ import UsersList from './admin/UsersList'
 import UpdateRole from './admin/UpdateRole'
 import OrdersList from './admin/OrdersList'
 import UpdateOrder from './admin/UpdateOrder'
+import ReviewList from './admin/ReviewList'
 
 function App() {
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -72,6 +73,7 @@ function App() {
         <Route path='/admin/user/:id' element={<ProtectedRoute children={<UpdateRole />} adminRoute={true} />} />
         <Route path='/admin/orders' element={<ProtectedRoute children={<OrdersList />} adminRoute={true} />} />
         <Route path='/admin/order/:id' element={<ProtectedRoute children={<UpdateOrder />} adminRoute={true} />} />
+        <Route path='/admin/reviews' element={<ProtectedRoute children={<ReviewList />} adminRoute={true} />} />
       </Routes>
       {isAuthenticated && <UserDashboard user={user} />}
     </Router>

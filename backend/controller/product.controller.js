@@ -219,7 +219,7 @@ const createReviewForProduct = asyncHandler(async (req, res, next) => {
 
 //Get Product Reviews
 const getProductReviews = asyncHandler(async (req, res, next) => {
-  const product = await Product.findById(req.params.id);
+  const product = await Product.findById(req.params.productId);
 
   if (!product) {
     throw new HandleError("Product not found", 404);

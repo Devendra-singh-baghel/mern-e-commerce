@@ -25,14 +25,6 @@ router.route("/product/:id").get(getSingleProduct);
 //Creating Review
 router.route("/product/review").post(verifyUserAuth, createReviewForProduct);
 
-//Get Product Reviews
-router.route("/product/reviews/:id").get(verifyUserAuth, getProductReviews);
-
-//Delete Product Reviews
-router
-  .route("/product/review/:productId/:reviewId")
-  .delete(verifyUserAuth, deleteReview);
-
 /************************************ X ********************************/
 //Admin Routes
 
@@ -55,5 +47,15 @@ router
 router
   .route("/admin/product/:id")
   .delete(verifyUserAuth, authorizeRoles("admin"), deleteProduct);
+
+//Get Product Reviews
+router
+  .route("/admin/reviews/:productId")
+  .get(verifyUserAuth, authorizeRoles("admin"), getProductReviews);
+
+//Delete Product Reviews
+router
+  .route("/admin/review/:productId/:reviewId")
+  .delete(verifyUserAuth, authorizeRoles("admin"), deleteReview);
 
 export default router;
