@@ -12,6 +12,16 @@ import payment from "./routes/payment.routes.js";
 
 const app = express();
 
+// Liveness check: Used by the uptime monitor / keep-alive cron job.
+app.get("/health", (req, res) => {
+  res.set("Cache-Control", "no-store");
+  res.status(200).json({
+    status: "ok",
+    uptime: Math.round(process.uptime()),
+    timestamp: new Date().toISOString(),
+  });
+});
+
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
