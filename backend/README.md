@@ -1,1 +1,0 @@
-This is a MERN fulstack E-commerce website.
